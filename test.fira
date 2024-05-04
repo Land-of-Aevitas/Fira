@@ -5,8 +5,8 @@ DEFROOT "Neutral" "ū"
 DEFROOT "Past Tense" "łem"
 
 
-DEFROOT "root_Liquid" "Płyn"
-DEF "Liquid" FROM "root_Liquid" GENDER m
-DEFROOT "root_Flame" "Çem"
-DEF "Flame" FROM "root_Flame" GENDER f
-DEF "Acid" FROM "Flame" "Liquid" WITH SLICE 0 2 2 0
+DEFROOT "r_Liquid" "Płyn"
+DEFWORD "Liquid" FROM "r_Liquid" GENDER m
+DEFROOT "r_Flame" "Çem"
+DEFWORD "Flame" FROM "r_Flame" GENDER f
+DEFWORD "Acid" FROM "Flame" "Liquid" WITH SLICE 0 2 2 0

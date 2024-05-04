@@ -1,0 +1,14 @@
+- `DEFROOT <wordEng> <wordFira> <params>`: Define a root word. `<wordEng>` `<wordFira>`
+- `DEFWORD <wordEng1> FROM <wordEng2> <params>`: Define a complex (non-root) word using other words. Optional parameters are:
+  - `<wordEngs>`: Any number of additional words can be added as roots. These must immediately follow the `DEF FROM`.
+  - `WITH-<SLICE>`: By default, all consituents are appended to each other to form the new word. A `WITH-<>` command can be used to change the concatenatino type.
+    - `WITH-SLICE <ints>`: Appends all words together, but additionally removes a number of characters from the start and end of each word as specified by the `<ints>`. The order of the ints is as follows: word1start word1end word2start word2end ...
+- Shared `DEFROOT` and `DEFWORD` params
+  - `GENDER <'m'|'M'|'f'|'F'|'n'|'N'|'p'|'P'>`: Adds a gendered ending to the word: `m` = Masculine, `f` = Feminine, `n` = Neutral, `p` = Plural. Use a capitalised letter to replace the last letter of the word instead of appending to it.
+- `LIST <regexString> <params>`: Lists all words that match the regex string. Optional parameters are:
+  - `LANG <'e'|'f'>`: Only searches words in a certain language. `e` = English, `f` = Fira.
+  - `TYPE <'r'|'c'>`: Only searches a secific table. `r` = Root word table, `c` = Complex word table.
+- Other commands
+  - `HELP`: Prints this page to the console.
+  - `EXIT`: Exits the program.
+  - `READ <file location>`: Reads the file at the specified address and executes it. It must be a .fira file!
