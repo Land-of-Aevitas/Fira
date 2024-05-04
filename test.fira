@@ -1,3 +1,12 @@
-123
-abc
-test
+DEFROOT "Feminine" "a"
+DEFROOT "Masculine" "ī"
+DEFROOT "Neutral" "ū"
+
+DEFROOT "Past Tense" "łem"
+
+
+DEFROOT "root_Liquid" "Płyn"
+DEF "Liquid" FROM "root_Liquid" GENDER m
+DEFROOT "root_Flame" "Çem"
+DEF "Flame" FROM "root_Flame" GENDER f
+DEF "Acid" FROM "Flame" "Liquid" WITH SLICE 0 2 2 0
