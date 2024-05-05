@@ -1,12 +1,14 @@
 DEFROOT "Feminine" "a"
 DEFROOT "Masculine" "ī"
 DEFROOT "Neutral" "ū"
-
 DEFROOT "Past Tense" "łem"
-
 
 DEFROOT "r_Liquid" "Płyn"
 DEFWORD "Liquid" FROM "r_Liquid" GENDER m
+
 DEFROOT "r_Flame" "Çem"
 DEFWORD "Flame" FROM "r_Flame" GENDER f
+
 DEFWORD "Acid" FROM "Flame" "Liquid" WITH SLICE 0 2 2 0
+
+TRANSLATE "Feminine" TO f
