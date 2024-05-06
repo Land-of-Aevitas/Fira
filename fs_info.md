@@ -16,7 +16,6 @@
   - `TYPE <r|c>`: Only searches a secific table. `r` = Root word table, `c` = Complex word table.
   - `NOTE`: Prints any notes stored matching entries.
 - `TRANSLATE <string> TO <f|e>`: Outputs the translation of a word to the specified language
-  - `NOTE`: Prints the note attached to the translation.
 
 ## Other commands
   - `HELP`: Prints this page to the console.

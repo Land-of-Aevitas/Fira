@@ -10,5 +10,6 @@ DEFROOT "r_Flame" "Çem"
 DEFWORD "Flame" FROM "r_Flame" GENDER f
 
 DEFWORD "Acid" FROM "Flame" "Liquid" WITH SLICE 0 2 2 0
+EXIT
 
 TRANSLATE "Feminine" TO f
