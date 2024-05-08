@@ -5,13 +5,8 @@ The main reader for 'FiraScript'.
 import re
 from zemia import sql, file
 from zemia.common import empty, Colours
-#from typing import Any
  # Local imports
 from fs_errors import FSError, FSSyntaxError, FSRecursionError
-
-RESET_DB = True # True to delete the db file, False to keep it
-MAX_RECURSION_DEPTH = 10
-DB_PATH = "fira.db"
 
 class FiraScript:
     '''Methods to decode FiraScript.'''
@@ -19,6 +14,7 @@ class FiraScript:
         self.root_word_table = root_word_table
         self.word_table = word_table
         self.silent = True
+        self.max_recursion_depth = 10
 
     def debug(self, command_list: list[str]) -> None:
         '''Used for debugging.'''
@@ -26,9 +22,34 @@ class FiraScript:
         if empty(command_list):
             raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
 
-        if command_list[0] == "SILENT":
-            self.silent = not self.silent
+        for i in range(len(command_list)-1, -1, -1):
+            if command_list[i] in ["SILENT", "MAX-RECUR"]:
+                break
+        if i > 0:
+            self.debug(command_list[:i]) # Recursion without this subcommand
+        if command_list[i] == "SILENT":
+            if i == len(command_list)-1: # No param
+                self.silent = not self.silent
+            else:
+                if command_list[i+1].lower() in ["true", "t", "1"]:
+                    self.silent = True
+                elif command_list[i+1].lower() in ["false", "f", "0"]:
+                    self.silent = False
+                else:
+                    raise FSSyntaxError(f"{func_name} ERROR: Invalid SILENT value in 「{' '.join(command_list)}」.")
             print(f"Silent mode set to {self.silent}.")
+        elif command_list[i] == "MAX-RECUR":
+            old_max = self.max_recursion_depth
+            if i == len(command_list)-1: # No param
+                self.max_recursion_depth = 10
+            else:
+                try:
+                    self.max_recursion_depth = int(command_list[i+1])
+                except ValueError as e:
+                    raise FSSyntaxError(f"{func_name} ERROR: Invalid MAX-RECUR value in 「{' '.join(command_list)}」.") from e
+            print(f"Max recursion depth updated from {old_max} to {self.max_recursion_depth}.")
+        else:
+            raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
 
     def translate(self, command_list: list[str], **kwargs) -> str:
         '''Translates a word.'''
@@ -272,8 +293,9 @@ class FiraScript:
         '''Reads a line of FiraScript.'''
          # Kwargs
         depth = kwargs.get("depth", 0)
-        if depth > MAX_RECURSION_DEPTH:
-            raise FSRecursionError(f"ERROR: Max recursion depth ({MAX_RECURSION_DEPTH}) reached.")
+
+        if depth > self.max_recursion_depth:
+            raise FSRecursionError(f"ERROR: Max recursion depth ({self.max_recursion_depth}) reached.")
 
         command_list = line.split(" ")
         for i, command in enumerate(command_list):
@@ -327,46 +349,54 @@ class FiraScript:
             raise FSSyntaxError(f"ERROR: Invalid command: 「{command_list[0]}」.")
         return False
 
-def main() -> None:
-    '''Main function.'''
-    if RESET_DB:
-        try:
-            file.delete(DB_PATH)
-        except (PermissionError, FileNotFoundError):
-            print(Colours.WARNING, f"Could not delete the db file at {DB_PATH}.", Colours.ENDC)
-     # Set up db connection
-    sql_connection = sql.connect(DB_PATH)
-    root_word_table = sql.Table(
-        sql_connection,
-        "rootWordTable", 
-        [
-            "wordEng STRING NOT NULL", 
-            "wordFira STRING NOT NULL", 
-            "note STRING", 
-            "PRIMARY KEY (wordEng, wordFira)"
-        ]
-    )
-    word_table = sql.Table(
+    @staticmethod
+    def main(db_path: str = "", **kwargs) -> None:
+        '''Main function. Do not include the file name in db_path.'''
+         # Kwargs
+        reset_db = kwargs.get("rdb", False) # True to delete the db file, False to keep it
+
+        db_path = db_path+"fira.db" if (len(db_path) == 0 or db_path[-1] == "/") else db_path+"/fira.db" # Add "fira.db" to db_path
+        if reset_db:
+            try:
+                file.delete(db_path)
+            except (PermissionError, FileNotFoundError):
+                print(Colours.WARNING, f"Could not delete the db file at db_path.", Colours.ENDC)
+
+        # Set up db connection
+        sql_connection = sql.connect(db_path)
+        root_word_table = sql.Table(
             sql_connection,
-            "wordTable",
+            "rootWordTable", 
             [
                 "wordEng STRING NOT NULL", 
                 "wordFira STRING NOT NULL", 
-                "formula STRING NOT NULL", 
                 "note STRING", 
                 "PRIMARY KEY (wordEng, wordFira)"
             ]
-    )
-     # Create FiraScript object
-    fira = FiraScript(root_word_table, word_table)
-     # Read input
-    print("Enter FiraScript code below. Type 'HELP' for commands.")
-    end = False
-    while not end:
-        user_inp = input("> ")
-        try:
-            end = fira.decode_input(user_inp)
-        except FSError as e:
-            print(Colours.FAIL, e, Colours.ENDC)
+        )
+        word_table = sql.Table(
+                sql_connection,
+                "wordTable",
+                [
+                    "wordEng STRING NOT NULL", 
+                    "wordFira STRING NOT NULL", 
+                    "formula STRING NOT NULL", 
+                    "note STRING", 
+                    "PRIMARY KEY (wordEng, wordFira)"
+                ]
+        )
+        # Create FiraScript object
+        fira = FiraScript(root_word_table, word_table)
+        # Read input
+        print("Enter FiraScript code below. Type 'HELP' for commands.")
+        end = False
+        while not end:
+            user_inp = input("> ")
+            try:
+                end = fira.decode_input(user_inp)
+            except FSError as e:
+                print(Colours.FAIL, e, Colours.ENDC)
 
-main()
+
+if __name__ == "__main__":
+    FiraScript.main(rdb=True)
