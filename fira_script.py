@@ -1,42 +1,37 @@
 '''
 The main reader for 'FiraScript'.
 '''
+ # Library imports
 import re
 from zemia import sql, file
-from zemia.common import empty
+from zemia.common import empty, Colours
+#from typing import Any
+ # Local imports
+from fs_errors import FSError, FSSyntaxError, FSRecursionError
 
-RESET_DB = True # True to delete fira.db, False to keep it
+RESET_DB = True # True to delete the db file, False to keep it
 MAX_RECURSION_DEPTH = 10
-
-class FiraScriptError(Exception):
-    '''
-    Raised when the syntax of the FiraScript is incorrect.
-    '''
+DB_PATH = "fira.db"
 
 class FiraScript:
-    '''
-    Holds methods to decode FiraScript.
-    '''
+    '''Methods to decode FiraScript.'''
     def __init__(self, root_word_table: sql.Table, word_table: sql.Table) -> None:
         self.root_word_table = root_word_table
         self.word_table = word_table
         self.silent = True
 
     def debug(self, command_list: list[str]) -> None:
-        '''
-        Used for debugging.
-        '''
+        '''Used for debugging.'''
+        func_name = "DEBUG"
         if empty(command_list):
-            raise FiraScriptError(f"DEBUG: No params provided in [{' '.join(command_list)}].")
+            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
 
         if command_list[0] == "SILENT":
             self.silent = not self.silent
             print(f"Silent mode set to {self.silent}.")
 
-    def translate(self, command_list: list[str], **kwargs) -> dict[str, list[str]]:
-        '''
-        Translates a word.
-        '''
+    def translate(self, command_list: list[str], **kwargs) -> str:
+        '''Translates a word.'''
          # Kwargs
         silent = kwargs.get("silent", True)
 
@@ -45,39 +40,37 @@ class FiraScript:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
         if empty(command_list):
-            raise FiraScriptError(f"{func_name}: No params provided in [{' '.join(command_list)}].")
+            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
         if len(command_list) < 3:
-            raise FiraScriptError(f"{func_name}: Invalid number of params in [{' '.join(command_list)}].")
+            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
 
-        return_dict: dict[str, list[str]] = {"words": []}
+        #return_dict: dict[str, list[str]] = {"words": []}
 
         root_translation, complex_translation = [], []
         if command_list[1] == "TO":
             if str.lower(command_list[2]) in ["e", "english"]:
-                root_translation = self.root_word_table.list_record(f"WHERE wordFira = \"{command_list[0]}\"", "wordEng")
-                complex_translation = self.word_table.list_record(f"WHERE wordFira = \"{command_list[0]}\"", "wordEng")
+                root_translation = self.root_word_table.list_record(f"WHERE wordFira = \"{command_list[0].lower()}\"", "wordEng")
+                complex_translation = self.word_table.list_record(f"WHERE wordFira = \"{command_list[0].lower()}\"", "wordEng")
             elif str.lower(command_list[2]) in ["f", "fira"]:
-                root_translation = self.root_word_table.list_record(f"WHERE wordEng = \"{command_list[0]}\"", "wordFira")
-                complex_translation = self.word_table.list_record(f"WHERE wordEng = \"{command_list[0]}\"", "wordFira")
+                root_translation = self.root_word_table.list_record(f"WHERE wordEng = \"{command_list[0].lower()}\"", "wordFira")
+                complex_translation = self.word_table.list_record(f"WHERE wordEng = \"{command_list[0].lower()}\"", "wordFira")
             else:
-                raise FiraScriptError(f"{func_name}: [{' '.join(command_list)}] not in format '<string> TO <e|f>', missing <e|f>.")
+                raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing <e|f>.")
         else:
-            raise FiraScriptError(f"{func_name}: [{' '.join(command_list)}] not in format '<string> TO <e|f>', missing TO.")
-
-        if len(root_translation)+len(complex_translation) > 0:
-            for word in root_translation:
-                return_dict["words"].append(word[0])
-            for word in complex_translation:
-                return_dict["words"].append(word[0])
+            raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing TO.")
 
         if not silent:
             print("DONE") # Proccessing complete
-        return return_dict
+
+        if len(root_translation) > 0:
+            return root_translation[0][0]
+        if len(complex_translation) > 0:
+            return complex_translation[0][0]
+
+        raise FSSyntaxError(f"{func_name} ERROR: No translation found for 「{' '.join(command_list)}」.")
 
     def def_root(self, command_list: list[str], **kwargs) -> dict[str, str]:
-        '''
-        Defines a root word.
-        '''
+        '''Defines a root word.'''
          # Kwargs
         silent = kwargs.get("silent", True)
 
@@ -86,7 +79,7 @@ class FiraScript:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
         if empty(command_list):
-            raise FiraScriptError(f"{func_name}: No params provided in [{' '.join(command_list)}].")
+            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
 
         returndict = {"wordEng": command_list[0], "wordFira": command_list[1], "note": ""}
 
@@ -95,11 +88,11 @@ class FiraScript:
                 if command_list[i] in ["GENDER", "NOTE"]:
                     break
             if i == 0:
-                raise FiraScriptError(f"{func_name}: Invalid subcommand in [{' '.join(command_list)}].")
+                raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
             returndict = self.def_root(command_list[:i]) # Recursion without this subcommand
             if command_list[i] == "GENDER":
                 gender_dict = {"m": "Masculine", "f": "Feminine", "n": "Neutral", "p": "Plural"}
-                returndict["wordFira"] += self.translate(f"{gender_dict[command_list[i+1]]} TO f")[0]
+                returndict["wordFira"] += self.translate(f"{gender_dict[command_list[i+1]]} TO f")
             elif command_list[i] == "NOTE":
                 returndict["note"] = command_list[i+1]
 
@@ -109,40 +102,70 @@ class FiraScript:
         return returndict
 
     def def_word(self, command_list: list[str], **kwargs) -> None:
-        '''
-        Defines a word.
-        '''
+        '''Defines a word.'''
          # Kwargs
         silent = kwargs.get("silent", True)
+        iteration = kwargs.get("iteration", False) # Whether this is an iteration of def_word and so should not apply WITH subcommands
 
         func_name = "DEFWORD"
         if not silent:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
         if empty(command_list):
-            raise FiraScriptError(f"{func_name}: No params provided in [{' '.join(command_list)}].")
+            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
         if len(command_list) < 3 or command_list[1] != "FROM":
-            raise FiraScriptError(f"{func_name}: [{' '.join(command_list)}] not in format '<string> FROM <string> <params>'.")
+            raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> FROM <string> <params>'.")
 
-        returndict = {"wordEng": command_list[0], "wordFira": command_list[1], "note": ""}
-        with_type = ""
+        returndict: dict[str, list|str] = {
+            "wordEng": command_list[0], "wordFira": command_list[1], "note": "", # Used for the final return
+            "subwords": [], # Translations of consituent words
+            "append": "", # Additional characters to append to the final word, used for GENDER subcommand
+            "with_type": "", "with_params": [] # WITH subcommand and its parameters
+            }
 
         for i in range(len(command_list)-1, -1, -1):
-            if command_list[i] in ["WITH-SLICE", "GENDER", "NOTE"]:
+            if command_list[i] in ["WITH", "GENDER", "NOTE"]:
                 break
         if i != 0:
-            if command_list[i] == "WITH-SLICE":
-                with_type = "SLICE"
-            else:
-                returndict = self.def_word(command_list[:i]) # Recursion without this subcommand
-                if command_list[i] == "GENDER":
-                    gender_dict = {"m": "Masculine", "f": "Feminine", "n": "Neutral", "p": "Plural"}
-                    returndict["wordFira"] += self.translate(f"{gender_dict[command_list[i+1]]} TO f")[0]
-                elif command_list[i] == "NOTE":
-                    returndict["note"] = command_list[i+1]
+            returndict = self.def_word(list(command_list[:i]), iteration=True) # Recursion without this subcommand
+            if command_list[i] == "WITH":
+                returndict["with_type"] = command_list[i+1]
+                returndict["with_params"] = command_list[i+2:]
+                command_list = command_list[:i]
+            elif command_list[i] == "GENDER":
+                gender_dict = {"m": "Masculine", "f": "Feminine", "n": "Neutral", "p": "Plural"}
+                returndict["append"] += self.translate([gender_dict[command_list[i+1]], "TO", "Fira"])
+            elif command_list[i] == "NOTE":
+                returndict["note"] = command_list[i+1]
+        else: # Base case
+             # Remove engWord and FROM
+            returndict["wordEng"] = command_list[0]
+            command_list = command_list[2:]
+             # Get all subwords
+            for _, command in enumerate(command_list):
+                if command == "WITH":
+                    break
+                try:
+                    returndict["subwords"].append(self.translate([command, "TO", "Fira"], silent=True))
+                except FSError as e:
+                    raise FSSyntaxError(f"{func_name} ERROR: Error in 「{' '.join(command_list)}」: {e}") from e
 
-         # Get words
-        
+        # Assemble the word
+        if not iteration:
+            returndict["wordFira"] = ""
+            if returndict["with_type"] == "":
+                for word in returndict["subwords"]:
+                    returndict["wordFira"] += word
+            elif returndict["with_type"] == "SLICE":
+                for i, word in enumerate(returndict["subwords"]):
+                    start = int(returndict["with_params"][i*2])
+                    end = int(returndict["with_params"][i*2+1])
+                    end = len(word) if end == 0 else end # If end is 0, set it to the end of the word
+                    returndict["wordFira"] += word[start:end]
+            else:
+                raise FSSyntaxError(f"{func_name} ERROR: Invalid WITH type in 「{' '.join(command_list)}」.")
+            #print("append", returndict["wordFira"], returndict["append"])
+            returndict["wordFira"] += returndict["append"]
 
         if not silent:
             print("DONE") # Proccessing complete
@@ -150,9 +173,7 @@ class FiraScript:
         return returndict
 
     def list_word(self, command_list: list[str], **kwargs) -> None:
-        '''
-        Lists all words that match a regex string.
-        '''
+        '''Lists all words that match a regex string.'''
          # Kwargs
         silent = kwargs.get("silent", True)
 
@@ -160,37 +181,39 @@ class FiraScript:
         if not silent:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
-        if empty(command_list):
-            raise FiraScriptError(f"{func_name}: No params provided in [{' '.join(command_list)}].")
-
-        conditions = [f"wordEng = \"{command_list[0]}\" OR wordFira = \"{command_list[0]}\""]
-        columns = ["wordEng", "wordFira"]
         tables: list[sql.Table] = [self.root_word_table, self.word_table]
+        if empty(command_list): # If blank, return everything
+            conditions = [""]
+            columns = ["*"]
+        else:
+            conditions = [f"wordEng = \"{command_list[0]}\" OR wordFira = \"{command_list[0]}\""]
+            columns = ["wordEng", "wordFira"]
+
         # Check params
         if len(command_list) == 1:
             # No optional params
             pass
-        else:
+        elif len(command_list) > 1:
             while len(command_list) > 1:
                 for i in range(len(command_list)-1, -1, -1):
                     if command_list[i] in ["LANG", "TYPE", "NOTE"]:
                         break
                 if i == 0:
-                    raise FiraScriptError(f"{func_name}: Invalid subcommand in [{' '.join(command_list)}].")
+                    raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
                 if command_list[i] == "LANG":
                     if command_list[i+1] == "e":
-                        conditions = [f"wordEng = \"{command_list[0]}\""]
+                        conditions = [f"wordEng = \"{command_list[0].lower()}\""]
                     elif command_list[i+1] == "f":
-                        conditions = [f"wordFira = \"{command_list[0]}\""]
+                        conditions = [f"wordFira = \"{command_list[0].lower()}\""]
                     else:
-                        raise FiraScriptError(f"{func_name}: Invalid LANG value in [{' '.join(command_list)}].")
+                        raise FSSyntaxError(f"{func_name} ERROR: Invalid LANG value in 「{' '.join(command_list)}」.")
                 elif command_list[i] == "TYPE":
                     if command_list[i+1] == "r":
                         tables = [self.root_word_table]
                     elif command_list[i+1] == "c":
                         tables = [self.word_table]
                     else:
-                        raise FiraScriptError(f"{func_name}: Invalid TYPE value in [{' '.join(command_list)}].")
+                        raise FSSyntaxError(f"{func_name} ERROR: Invalid TYPE value in 「{' '.join(command_list)}」.")
                 elif command_list[i] == "NOTE":
                     columns.append("note")
 
@@ -199,14 +222,17 @@ class FiraScript:
         if not silent:
             print("DONE") # Proccessing complete
 
-        for table in tables:
-            for row in table.list_record("WHERE "+" AND ".join(conditions), ", ".join(columns)):
-                print(row)
+        if not empty(conditions):
+            for table in tables:
+                for row in table.list_record("WHERE "+" AND ".join(conditions), ", ".join(columns)):
+                    print(row)
+        else:
+            for table in tables:
+                for row in table.list_record("", ", ".join(columns)):
+                    print(row)
 
     def help(self, **kwargs) -> list[str]:
-        '''
-        Prints a list of commands.
-        '''
+        '''Prints a list of commands.'''
          # Kwargs
         silent = kwargs.get("silent", True)
 
@@ -222,47 +248,43 @@ class FiraScript:
         return ["Info (read from fs_info.md):"]+f
 
     def read(self, command_list: list[str], depth: int = 0) -> bool:
-        '''
-        Reads a .fira file and executes the contents.
-        '''
+        '''Reads a .fira file and executes the contents.'''
         func_name = "READ"
         if empty(command_list) or len(command_list) != 1:
-            raise FiraScriptError(f"{func_name}: Invalid number of params in [{' '.join(command_list)}].")
+            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
 
         if not re.search(".fira$", command_list[0]):
-            raise FiraScriptError(f"{func_name}: Invalid file type: [{command_list[0]}].")
+            raise FSSyntaxError(f"{func_name} ERROR: Invalid file type: 「{command_list[0]}」.")
         try:
             f = file.read(command_list[0], "utf-8")
         except FileNotFoundError as e:
-            raise FiraScriptError(f"{func_name}: File not found: [{command_list[0]}].") from e
+            raise FSSyntaxError(f"{func_name} ERROR: File not found: 「{command_list[0]}」.") from e
         for line_number, file_line in enumerate(f):
             try:
                 end = self.decode_input(file_line, depth=depth+1)
                 if end:
                     return True
-            except FiraScriptError as e:
-                raise FiraScriptError(f"{func_name}: Error in file [{command_list[0]}] at line {line_number+1}: {e}") from e
+            except FSSyntaxError as e:
+                raise FSSyntaxError(f"{func_name} ERROR: Error in file 「{command_list[0]}」 at line {line_number+1}: {e}") from e
         return False
 
     def decode_input(self, line: str, **kwargs) -> bool:
-        '''
-        Reads a line of FiraScript.
-        '''
+        '''Reads a line of FiraScript.'''
          # Kwargs
         depth = kwargs.get("depth", 0)
         if depth > MAX_RECURSION_DEPTH:
-            raise FiraScriptError(f"Max recursion depth ({MAX_RECURSION_DEPTH}) reached.")
+            raise FSRecursionError(f"ERROR: Max recursion depth ({MAX_RECURSION_DEPTH}) reached.")
 
         command_list = line.split(" ")
         for i, command in enumerate(command_list):
             if command == "": # Skip empty commands
                 continue
-            if re.search('^"', command) is not None: # Check if the command is a String
-                if re.search('"$', command) is None: # Check if the command is the start of a multi-word String
+            if re.search("^\\[", command) is not None: # Check if the command is a group (i.e. it starts with a [)
+                if re.search("\\]$", command) is None: # Check if the command is the start of a multi-word String (i.e. it doesn't end with a ])
                     merge_end = -1
                     # Find the end of the string
                     for j in range(i+1, len(command_list)):
-                        if re.search('"$', command_list[j]):
+                        if re.search("\\]$", command_list[j]):
                             merge_end = j
                             break
                     # Merge the string
@@ -287,28 +309,33 @@ class FiraScript:
         elif command_list[0] == "DEFROOT":
             defroot_dict = self.def_root(command_list[1:], silent=self.silent)
             self.root_word_table.add_record(
-                "\""+defroot_dict["wordEng"]+"\"", 
-                "\""+defroot_dict["wordFira"]+"\"", 
+                "\""+defroot_dict["wordEng"].lower()+"\"", 
+                "\""+defroot_dict["wordFira"].lower()+"\"", 
                 "\""+defroot_dict["note"]+"\"")
         elif command_list[0] == "DEFWORD":
-            self.def_word(command_list[1:], silent=self.silent)
+            defword_dict = self.def_word(command_list[1:], silent=self.silent)
+            self.word_table.add_record(
+                "\""+defword_dict["wordEng"].lower()+"\"", 
+                "\""+defword_dict["wordFira"].lower()+"\"", 
+                "\""+line+"\"", 
+                "\""+defword_dict["note"]+"\"")
         elif command_list[0] == "LIST":
             self.list_word(command_list[1:], silent=self.silent)
         elif command_list[0] == "TRANSLATE":
-            translate_dict = self.translate(command_list[1:], silent=self.silent)
-            for word in translate_dict["words"]:
-                print(word, end=" ")
-            print()
+            print(self.translate(command_list[1:], silent=self.silent).capitalize())
         else:
-            raise FiraScriptError(f"Invalid command: [{command_list[0]}].")
+            raise FSSyntaxError(f"ERROR: Invalid command: 「{command_list[0]}」.")
         return False
 
 def main() -> None:
     '''Main function.'''
     if RESET_DB:
-        file.delete("fira.db")
+        try:
+            file.delete(DB_PATH)
+        except (PermissionError, FileNotFoundError):
+            print(Colours.WARNING, f"Could not delete the db file at {DB_PATH}.", Colours.ENDC)
      # Set up db connection
-    sql_connection = sql.connect(f"fira.db")
+    sql_connection = sql.connect(DB_PATH)
     root_word_table = sql.Table(
         sql_connection,
         "rootWordTable", 
@@ -333,13 +360,13 @@ def main() -> None:
      # Create FiraScript object
     fira = FiraScript(root_word_table, word_table)
      # Read input
-    print("Enter FiraScript. Type 'HELP' for commands.")
+    print("Enter FiraScript code below. Type 'HELP' for commands.")
     end = False
     while not end:
         user_inp = input("> ")
         try:
             end = fira.decode_input(user_inp)
-        except FiraScriptError as e:
-            print(e)
+        except FSError as e:
+            print(Colours.FAIL, e, Colours.ENDC)
 
 main()
