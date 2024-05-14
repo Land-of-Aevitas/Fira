@@ -112,7 +112,7 @@ class FiraScript:
                 raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
             returndict = self.def_root(command_list[:i]) # Recursion without this subcommand
             if command_list[i] == "GENDER":
-                gender_dict = {"m": "Masculine", "f": "Feminine", "n": "Neutral", "p": "Plural"}
+                gender_dict = {"m": "_masculine", "f": "_feminine", "n": "_neutral", "p": "_plural"}
                 returndict["wordFira"] += self.translate(f"{gender_dict[command_list[i+1]]} TO f")
             elif command_list[i] == "NOTE":
                 returndict["note"] = command_list[i+1]

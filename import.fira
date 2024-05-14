@@ -1,0 +1,13 @@
+DEFROOT _feminine a
+DEFROOT _masculine ī
+DEFROOT _neutral ū
+DEFROOT _plural o
+
+DEFROOT _instance v
+DEFROOT _object p
+DEFROOT [_opposite quality] ƶyṉe
+DEFROOT [_passive valency] eo
+DEFROOT [_past tense] łem
+DEFROOT _place iamī
+DEFROOT _subject ş
+DEFROOT _verb e

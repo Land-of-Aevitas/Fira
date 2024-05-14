@@ -20,6 +20,7 @@
 ## Other commands
   - `HELP`: Prints this page to the console.
   - `EXIT`: Exits the program.
+  - `# <string>`: Used to leave comments in the code
   - `READ <file location>`: Reads the file at the specified address and executes it. It must be a .fira file!
   - `DEBUG <debug command>`: Groups commands used for debugging
     - `SILENT <T|F>`: Sets whether to call top-level commands silently. Boolean `<T|F>` is optional and, if excluded, toggles the current silent value.
