@@ -1,0 +1,198 @@
+{
+  "workspaces": {
+    "Notes": {
+      "main": {
+        "id": "76b2669872193380",
+        "type": "split",
+        "children": [
+          {
+            "id": "54640f22a7d63fd7",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "f940d82924601509",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "README.md",
+                    "mode": "source",
+                    "backlinks": false,
+                    "source": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "vertical"
+      },
+      "left": {
+        "id": "e3390e192414c952",
+        "type": "split",
+        "children": [
+          {
+            "id": "365111600970be4a",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "2b71eeecdbc6f53a",
+                "type": "leaf",
+                "state": {
+                  "type": "file-explorer",
+                  "state": {
+                    "sortOrder": "alphabetical"
+                  }
+                }
+              },
+              {
+                "id": "d13d13b5a44c383a",
+                "type": "leaf",
+                "state": {
+                  "type": "search",
+                  "state": {
+                    "query": "",
+                    "matchingCase": false,
+                    "explainSearch": false,
+                    "collapseAll": false,
+                    "extraContext": false,
+                    "sortOrder": "alphabetical"
+                  }
+                }
+              },
+              {
+                "id": "e30271f80b8e742d",
+                "type": "leaf",
+                "state": {
+                  "type": "bookmarks",
+                  "state": {}
+                }
+              },
+              {
+                "id": "a1674a038d11dbc1",
+                "type": "leaf",
+                "state": {
+                  "type": "surfing-tab-tree",
+                  "state": {}
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "horizontal",
+        "width": 300
+      },
+      "right": {
+        "id": "8e59c1179162934b",
+        "type": "split",
+        "children": [
+          {
+            "id": "6d41dd7a8cf52048",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "c8bccbe48bde4353",
+                "type": "leaf",
+                "state": {
+                  "type": "backlink",
+                  "state": {
+                    "file": "README.md",
+                    "collapseAll": false,
+                    "extraContext": false,
+                    "sortOrder": "alphabetical",
+                    "showSearch": false,
+                    "searchQuery": "",
+                    "backlinkCollapsed": false,
+                    "unlinkedCollapsed": true
+                  }
+                }
+              },
+              {
+                "id": "df897e1b46505c8c",
+                "type": "leaf",
+                "state": {
+                  "type": "outgoing-link",
+                  "state": {
+                    "file": "README.md",
+                    "linksCollapsed": false,
+                    "unlinkedCollapsed": true
+                  }
+                }
+              },
+              {
+                "id": "2dff2c57ee1ac020",
+                "type": "leaf",
+                "state": {
+                  "type": "tag",
+                  "state": {
+                    "sortOrder": "frequency",
+                    "useHierarchy": true
+                  }
+                }
+              },
+              {
+                "id": "eeadae5a9a3557ce",
+                "type": "leaf",
+                "state": {
+                  "type": "outline",
+                  "state": {
+                    "file": "README.md"
+                  }
+                }
+              },
+              {
+                "id": "ef9e7547f63ffc72",
+                "type": "leaf",
+                "state": {
+                  "type": "all-properties",
+                  "state": {
+                    "sortOrder": "frequency",
+                    "showSearch": false,
+                    "searchQuery": ""
+                  }
+                }
+              },
+              {
+                "id": "c7dd54d00d88b867",
+                "type": "leaf",
+                "state": {
+                  "type": "DICE_ROLLER_VIEW",
+                  "state": {}
+                }
+              },
+              {
+                "id": "c183765d5fa70d15",
+                "type": "leaf",
+                "state": {
+                  "type": "advanced-tables-toolbar",
+                  "state": {}
+                }
+              }
+            ],
+            "currentTab": 4
+          }
+        ],
+        "direction": "horizontal",
+        "width": 456.5,
+        "collapsed": true
+      },
+      "left-ribbon": {
+        "hiddenItems": {
+          "command-palette:Open command palette": false,
+          "switcher:Open quick switcher": false,
+          "graph:Open graph view": false,
+          "canvas:Create new canvas": false,
+          "templates:Insert template": false,
+          "table-editor-obsidian:Advanced Tables Toolbar": false,
+          "templater-obsidian:Templater": false,
+          "obsidian-excalidraw-plugin:Create new drawing": false,
+          "obsidian-leaflet-plugin:Open Leaflet Map": false,
+          "obsidian-5e-statblocks:Open Creature Pane": false,
+          "workspaces:Manage workspace layouts": false
+        }
+      },
+      "active": "f940d82924601509"
+    }
+  },
+  "active": "Notes"
+}

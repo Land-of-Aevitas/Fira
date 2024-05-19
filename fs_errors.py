@@ -1,6 +1,4 @@
-'''
-Errors for the FiraScript interpreter.
-'''
+'''Errors for the FiraScript interpreter.'''
 
 class FSError(Exception):
     '''Parent for all FiraScript errors.'''
