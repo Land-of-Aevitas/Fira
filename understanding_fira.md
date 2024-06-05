@@ -32,8 +32,9 @@ Adds an extra object to a sentence.
 #### Derivation
 For switching between noun, verb and adjective, e.g. using the verb "to hunt" to derive the noun "hunter".
 
-| Verb -> Noun (Instance) | '-v'                                 | "To hunt" = Zabeñe<br>so "Hunting" = "Zabeñevā"         |
+| Derivation              | Method                               | Example                                                 |
 | ----------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Verb -> Noun (Instance) | '-v'                                 | "To hunt" = Zabeñe<br>so "Hunting" = "Zabeñevā"         |
 | Verb -> Noun (Subject)  | '-ş'                                 | "To hunt" = Zabeñe<br>so "Hunter" = "Zabeñeşā"          |
 | Verb -> Noun (Object)   | '-p'                                 | "To hunt" = Zabeñe<br>so "Hunted" = "Zabeñepā"          |
 | Verb -> Noun (Place)    | '-iami'                              | "To hunt" = Zabeñe<br>so "Hunting area" = "Zabeñetiamā" |
