@@ -8,7 +8,7 @@ from zemia.common import Colours
 from fs_errors import FSError
 from instructions import Instructions
 
-class FiraScript:
+class FiraScript: # pylint: disable=too-few-public-methods
     '''Methods to decode FiraScript.'''
     def __init__(self, root_word_table: sql.Table, word_table: sql.Table) -> None:
         self.root_word_table = root_word_table
