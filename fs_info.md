@@ -17,6 +17,9 @@
   - `NOTE`: Prints any notes stored matching entries.
 - `TRANSLATE <string> TO <f|e>`: Outputs the translation of a word to the specified language
 
+## Modifying Words
+- `DELETE <wordEng>`: Deletes the specified word. Searches both English and Fira for both tables.
+
 ## Other commands
   - `HELP`: Prints this page to the console.
   - `EXIT`: Exits the program.
