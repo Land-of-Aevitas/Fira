@@ -20,6 +20,7 @@ class Instructions:
         self.root_word_table = root_word_table
         self.word_table = word_table
 
+
     def decode(self, line: str, **kwargs) -> bool:
         '''Reads a line of FiraScript.'''
          # Kwargs
@@ -50,15 +51,6 @@ class Instructions:
                 command_list[i] = command_list[i][1:-1]
         if command_list[0] == "":
             pass
-        elif command_list[0] == "EXIT":
-            return True
-        elif command_list[0] == "DEBUG":
-            self.debug(command_list[1:])
-        elif command_list[0] == "HELP":
-            for i in self.help(silent=self.silent):
-                print(i)
-        elif command_list[0] == "READ":
-            return self.read(command_list[1:], depth)
         elif command_list[0] == "DEFROOT":
             defroot_dict = self.defroot(command_list[1:], silent=self.silent)
             self.root_word_table.add_record(
@@ -76,48 +68,20 @@ class Instructions:
             self.listwords(command_list[1:], silent=self.silent)
         elif command_list[0] == "TRANSLATE":
             print(self.translate(command_list[1:], silent=self.silent).capitalize())
+        elif command_list[0] == "DELETE":
+            self.delete(command_list[1:], silent=self.silent)
+        elif command_list[0] == "HELP":
+            for i in self.help(silent=self.silent):
+                print(i)
+        elif command_list[0] == "READ":
+            return self.read(command_list[1:], depth)
+        elif command_list[0] == "DEBUG":
+            self.debug(command_list[1:])
+        elif command_list[0] == "EXIT":
+            return True
         else:
             raise FSSyntaxError(f"ERROR: Invalid command: 「{command_list[0]}」.")
         return False
-
-    def translate(self, command_list: list[str], **kwargs) -> str:
-        '''Translates a word.'''
-         # Kwargs
-        silent = kwargs.get("silent", True)
-
-        func_name = "TRANSLATE"
-        if not silent:
-            print(func_name, command_list, end=" ... ") # Begin proccessing
-
-        if empty(command_list):
-            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
-        if len(command_list) < 3:
-            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
-
-        #return_dict: dict[str, list[str]] = {"words": []}
-
-        root_translation, complex_translation = [], []
-        if command_list[1] == "TO":
-            if str.lower(command_list[2]) in ["e", "english"]:
-                root_translation = self.root_word_table.list_record(f"WHERE wordFira = \"{command_list[0].lower()}\"", "wordEng")
-                complex_translation = self.word_table.list_record(f"WHERE wordFira = \"{command_list[0].lower()}\"", "wordEng")
-            elif str.lower(command_list[2]) in ["f", "fira"]:
-                root_translation = self.root_word_table.list_record(f"WHERE wordEng = \"{command_list[0].lower()}\"", "wordFira")
-                complex_translation = self.word_table.list_record(f"WHERE wordEng = \"{command_list[0].lower()}\"", "wordFira")
-            else:
-                raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing <e|f>.")
-        else:
-            raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing TO.")
-
-        if not silent:
-            print("DONE") # Proccessing complete
-
-        if len(root_translation) > 0:
-            return root_translation[0][0]
-        if len(complex_translation) > 0:
-            return complex_translation[0][0]
-
-        raise FSSyntaxError(f"{func_name} ERROR: No translation found for 「{' '.join(command_list)}」.")
 
     def defroot(self, command_list: list[str], **kwargs) -> dict[str, str]:
         '''Defines a root word.'''
@@ -151,7 +115,7 @@ class Instructions:
 
         return returndict
 
-    def defword(self, command_list: list[str], **kwargs) -> None:
+    def defword(self, command_list: list[str], **kwargs) -> dict[str, list|str]:
         '''Defines a word.'''
          # Kwargs
         silent = kwargs.get("silent", True)
@@ -280,6 +244,64 @@ class Instructions:
             for table in tables:
                 for row in table.list_record("", ", ".join(columns)):
                     print(row)
+
+    def translate(self, command_list: list[str], **kwargs) -> str:
+        '''Translates a word.'''
+         # Kwargs
+        silent = kwargs.get("silent", True)
+
+        func_name = "TRANSLATE"
+        if not silent:
+            print(func_name, command_list, end=" ... ") # Begin proccessing
+
+        if empty(command_list):
+            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+        if len(command_list) < 3:
+            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
+
+        #return_dict: dict[str, list[str]] = {"words": []}
+
+        root_translation, complex_translation = [], []
+        if command_list[1] == "TO":
+            if str.lower(command_list[2]) in ["e", "english"]:
+                root_translation = self.root_word_table.list_record(f"WHERE wordFira = \"{command_list[0].lower()}\"", "wordEng")
+                complex_translation = self.word_table.list_record(f"WHERE wordFira = \"{command_list[0].lower()}\"", "wordEng")
+            elif str.lower(command_list[2]) in ["f", "fira"]:
+                root_translation = self.root_word_table.list_record(f"WHERE wordEng = \"{command_list[0].lower()}\"", "wordFira")
+                complex_translation = self.word_table.list_record(f"WHERE wordEng = \"{command_list[0].lower()}\"", "wordFira")
+            else:
+                raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing <e|f>.")
+        else:
+            raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing TO.")
+
+        if not silent:
+            print("DONE") # Proccessing complete
+
+        if len(root_translation) > 0:
+            return root_translation[0][0]
+        if len(complex_translation) > 0:
+            return complex_translation[0][0]
+
+        raise FSSyntaxError(f"{func_name} ERROR: No translation found for 「{' '.join(command_list)}」.")
+
+    def delete(self, command_list: list[str], **kwargs) -> None:
+        '''Deletes a word.'''
+         # Kwargs
+        silent = kwargs.get("silent", True)
+
+        func_name = "DELETE"
+        if not silent:
+            print(func_name, command_list, end=" ... ") # Begin proccessing
+
+        if empty(command_list):
+            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+        if len(command_list) != 1:
+            raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string>'.")
+        self.root_word_table.delete_record(f"WHERE wordEng = \"{command_list[0].lower()}\" OR wordFira = \"{command_list[0].lower()}\"")
+        self.word_table.delete_record(f"WHERE wordEng = \"{command_list[0].lower()}\" OR wordFira = \"{command_list[0].lower()}\"")
+
+        if not silent:
+            print("DONE") # Proccessing complete
 
     def help(self, **kwargs) -> list[str]:
         '''Prints a list of commands.'''
