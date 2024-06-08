@@ -69,6 +69,8 @@ class Instructions:
                 self.listwords(command_list[1:], silent=self.silent)
             case "TRANSLATE":
                 print(self.translate(command_list[1:], silent=self.silent).capitalize())
+            case "UPDATE":
+                self.update(command_list[1:], silent=self.silent)
             case "DELETE":
                 self.delete(command_list[1:], silent=self.silent)
             case "HELP":
@@ -287,6 +289,27 @@ class Instructions:
             return complex_translation[0][0]
 
         raise FSSyntaxError(f"{func_name} ERROR: No translation found for 「{' '.join(command_list)}」.")
+
+    def update(self, command_list: list[str], **kwargs) -> None:
+        '''Updates a word.'''
+         # Kwargs
+        silent = kwargs.get("silent", True)
+
+        func_name = "UPDATE"
+        if not silent:
+            print(func_name, command_list, end=" ... ") # Begin proccessing
+
+        if empty(command_list):
+            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+        if len(command_list) != 2:
+            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
+
+        word_eng, word_fira = command_list[0].lower(), command_list[1].lower()
+        if not self.root_word_table.update_record("wordFira", f"\"{word_fira}\"", f"WHERE wordEng = \"{word_eng}\""):
+            raise FSSyntaxError(f"{func_name} ERROR: No record found for 「{' '.join(command_list)}」.")
+
+        if not silent:
+            print("DONE") # Proccessing complete
 
     def delete(self, command_list: list[str], **kwargs) -> None:
         '''Deletes a word.'''
