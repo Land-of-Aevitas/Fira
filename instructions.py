@@ -10,10 +10,12 @@ class Instructions:
     def __init__(self) -> None:
         self.root_word_table: sql.Table = None
         self.word_table: sql.Table = None
-         # Settings
+         # Settings - can be changed with the DEBUG command
         self.silent = True
         self.max_recursion_depth = 10
         self.print_read = False
+
+    GENDER_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural"}
 
     def set_tables(self, root_word_table: sql.Table, word_table: sql.Table) -> None:
         '''Sets the tables for the Instructions.'''
@@ -84,7 +86,7 @@ class Instructions:
                 return True
             case _: # Implicit TRANSLATE
                 #raise FSSyntaxError(f"ERROR: Invalid command: 「{command_list[0]}」.")
-                print(self.translate(command_list+["TO","Fira"], silent=self.silent).capitalize())
+                print(self.translate(command_list+["TO","f"], silent=self.silent).capitalize())
         return False
 
     def defroot(self, command_list: list[str], **kwargs) -> dict[str, str]:
@@ -106,8 +108,7 @@ class Instructions:
                 match command_list[i]:
                     case "GENDER":
                         returndict = self.defroot(command_list[:i]) # Recursion without this subcommand
-                        gender_dict = {"m": "_masculine", "f": "_feminine", "n": "_neutral", "p": "_plural"}
-                        returndict["wordFira"] += self.translate(f"{gender_dict[command_list[i+1]]} TO f".split(" "))
+                        returndict["wordFira"] += self.translate(self.GENDER_DICT[command_list[i+1]]+["TO","f"])
                         break
                     case "NOTE":
                         returndict = self.defroot(command_list[:i]) # Recursion without this subcommand
@@ -153,9 +154,7 @@ class Instructions:
                     break
                 case "GENDER":
                     returndict = self.defword(list(command_list[:i]), iteration=True) # Recursion without this subcommand
-                    returndict["with_type"] = command_list[i+1]
-                    returndict["with_params"] = command_list[i+2:]
-                    command_list = command_list[:i]
+                    returndict["append"] += self.translate([self.GENDER_DICT[command_list[i+1]], "TO", "Fira"])
                     break
                 case "NOTE":
                     returndict = self.defword(list(command_list[:i]), iteration=True) # Recursion without this subcommand
@@ -177,17 +176,23 @@ class Instructions:
         # Assemble the word
         if not iteration:
             returndict["wordFira"] = ""
-            if returndict["with_type"] == "":
-                for word in returndict["subwords"]:
-                    returndict["wordFira"] += word
-            elif returndict["with_type"] == "SLICE":
-                for i, word in enumerate(returndict["subwords"]):
-                    start = int(returndict["with_params"][i*2])
-                    end = int(returndict["with_params"][i*2+1])
-                    end = len(word) if end == 0 else end # If end is 0, set it to the end of the word
-                    returndict["wordFira"] += word[start:end]
-            else:
-                raise FSSyntaxError(f"{func_name} ERROR: Invalid WITH type in 「{' '.join(command_list)}」.")
+            match returndict["with_type"]:
+                case "":
+                    for word in returndict["subwords"]:
+                        returndict["wordFira"] += word
+                case "SLICE":
+                    for i, word in enumerate(returndict["subwords"]):
+                        start = int(returndict["with_params"][i*2])
+                        end = int(returndict["with_params"][i*2+1])
+                        end = len(word) if end == 0 else end # If end is 0, set it to the end of the word
+                        returndict["wordFira"] += word[start:end]
+                case "JOIN":
+                    if len(returndict["with_params"]) == 0:
+                        returndict["wordFira"] = "".join(returndict["subwords"])
+                    else:
+                        returndict["wordFira"] = returndict["with_params"][0].join(returndict["subwords"])
+                case _:
+                    raise FSSyntaxError(f"{func_name} ERROR: Invalid WITH type in 「{' '.join(command_list)}」.")
             #print("append", returndict["wordFira"], returndict["append"])
             returndict["wordFira"] += returndict["append"]
 
