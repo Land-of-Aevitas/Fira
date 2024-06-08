@@ -5,13 +5,13 @@ Complex word - stored in the wordTable. Defined in terms of other words and so c
 
 ## Defining Words
 - `DEFROOT <wordEng> <wordFira> <params>`: Define a root word. `<wordEng>` is a string with the English word and `<wordFira>` is another string with it's Fira translation.
-  - `GENDER <m|M|f|F|n|N|p|P>`: Adds a gendered ending to the word: `m` = Masculine, `f` = Feminine, `n` = Neutral, `p` = Plural. Use a capitalised letter to replace the last letter of the word instead of appending to it.
+  - `END <m|M|f|F|n|N|p|P>`: Adds a gendered or other ending to the word: `m` = Masculine, `f` = Feminine, `n` = Neutral, `p` = Plural. Use a capitalised letter to replace the last letter of the word instead of appending to it.
   - `NOTE <string>` Adds a note in the .db file next to this word's entry.
 - `DEFWORD <wordEng1> FROM <wordEngs> <params>`: Define a complex (non-root) word using other words.
   - `WITH <withType>`: By default, all constituents are appended to each other to form the new word. A `WITH <>` command can be used to change the concatenation type. This must immediately follow the `DEFWORD ... FROM ...`.
     - `WITH SLICE <ints>`: Appends all words together, but additionally removes a number of characters from the start and end of each word as specified by the `<ints>`. The order of the ints is as follows: word1start word1end word2start word2end etc. Putting a 0 at the end of a word will make it go to the end, so `2 0` will be interpreted as `[2:]`.
     - `WITH JOIN <string>`:  Adds the string between each word. If no string is provided, it defaults to `""`.
-  - `GENDER <m|M|f|F|n|N|p|P>`: Adds a gendered ending to the word: `m` = Masculine, `f` = Feminine, `n` = Neutral, `p` = Plural. Use a capitalised letter to replace the last letter of the word instead of appending to it.
+  - `END <m|M|f|F|n|N|p|P>`: Adds a gendered or other ending to the word: `m` = Masculine, `f` = Feminine, `n` = Neutral, `p` = Plural. Use a capitalised letter to replace the last letter of the word instead of appending to it.
   - `NOTE <string>` Adds a note in the .db file next to this word's entry.
 
 ## Retrieving Words
@@ -40,6 +40,6 @@ Complex word - stored in the wordTable. Defined in terms of other words and so c
   - Instruction: The start of a command that specifies what it should do. Sometimes an instruction is broken into multiple parts across the command, such as in DEFWORD ... FROM ... .
     - Example: **DEFROOT** "Past Tense" "łem"
   - Parameter: Any changeable part of a command., i.e. anything other than the instruction
-    - Example: DEFWORD **"Flame"** FROM **"r_Flame"** **GENDER** **f**
+    - Example: DEFWORD **"Flame"** FROM **"r_Flame"** **END** **f**
   - Subcommand: A parameter that acts as another instruction that must be completed in order to complete the primary instruction of a command.
-    - Example: DEFWORD "Flame" FROM "r_Flame" **GENDER** **f**
+    - Example: DEFWORD "Flame" FROM "r_Flame" **END** **f**

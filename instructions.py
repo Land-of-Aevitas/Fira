@@ -15,7 +15,7 @@ class Instructions:
         self.max_recursion_depth = 10
         self.print_read = False
 
-    GENDER_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural"}
+    END_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural"}
 
     def set_tables(self, root_word_table: sql.Table, word_table: sql.Table) -> None:
         '''Sets the tables for the Instructions.'''
@@ -106,9 +106,9 @@ class Instructions:
         if len(command_list) > 2:
             for i in range(len(command_list)-1, -1, -1):
                 match command_list[i]:
-                    case "GENDER":
+                    case "END":
                         returndict = self.defroot(command_list[:i]) # Recursion without this subcommand
-                        returndict["wordFira"] += self.translate(self.GENDER_DICT[command_list[i+1]]+["TO","f"])
+                        returndict["wordFira"] += self.translate(self.END_DICT[command_list[i+1]]+["TO","f"])
                         break
                     case "NOTE":
                         returndict = self.defroot(command_list[:i]) # Recursion without this subcommand
@@ -140,7 +140,7 @@ class Instructions:
         returndict: dict[str, list|str] = {
             "wordEng": command_list[0], "wordFira": command_list[1], "note": "", # Used for the final return
             "subwords": [], # Translations of consituent words
-            "append": "", # Additional characters to append to the final word, used for GENDER subcommand
+            "append": "", # Additional characters to append to the final word, used for END subcommand
             "with_type": "", "with_params": [] # WITH subcommand and its parameters
             }
 
@@ -152,9 +152,9 @@ class Instructions:
                     returndict["with_params"] = command_list[i+2:]
                     command_list = command_list[:i]
                     break
-                case "GENDER":
+                case "END":
                     returndict = self.defword(list(command_list[:i]), iteration=True) # Recursion without this subcommand
-                    returndict["append"] += self.translate([self.GENDER_DICT[command_list[i+1]], "TO", "Fira"])
+                    returndict["append"] += self.translate([self.END_DICT[command_list[i+1]], "TO", "Fira"])
                     break
                 case "NOTE":
                     returndict = self.defword(list(command_list[:i]), iteration=True) # Recursion without this subcommand

@@ -1,3 +1,5 @@
+DEFROOT Fira Fiṟa
+
 DEFROOT _feminine a
 DEFROOT _masculine ī
 DEFROOT _neutral ū
@@ -5,11 +7,111 @@ DEFROOT _plural o
 
 DEFROOT _instance v
 DEFROOT _object p
-DEFROOT [_opposite quality] ƶyṉe
+DEFROOT [_opposite quality] ƶyṉe NOTE [Need to revisit to determine whether this is a root]
 DEFROOT [_passive valency] eo
 DEFROOT [_past tense] łem
-DEFROOT _place iamī
+DEFROOT _place iam END m
 DEFROOT _subject ş
 DEFROOT _verb e
 
-DEFROOT R_above Nab GENDER n
+DEFROOT Autumn Rets END f NOTE [Season]
+
+DEFROOT Four Şt END n
+DEFROOT Five Cav END n NOTE [Digit]
+DEFROOT Eight Devy END n
+
+DEFROOT Above Nab END n
+DEFROOT And Veƶ NOTE [Irregular ending]
+DEFROOT Animal Deṉ END m
+DEFROOT Apart Pemer END f
+DEFROOT Beginning Poṉ END n
+DEFROOT Bell Buom END m NOTE [Onomatopoeia]
+DEFROOT Big Dētem END f
+DEFROOT Bottom Sop END m NOTE [As in 'base']
+DEFROOT Chest Brenl END f
+DEFROOT Cloth Załur END m
+DEFROOT Colour Cṟom END f
+DEFROOT Dead Kraçu NOTE [Irregular ending]
+DEFROOT Digit Ƶep END f
+DEFROOT Fat Tłab END n
+DEFROOT Flame Çem END f
+DEFROOT Food Çym END m
+DEFROOT Forever Loç END n
+DEFROOT He Ren END m
+DEFROOT Head Laşfr END f
+DEFROOT Heat Bied END f
+DEFROOT I Rop END f
+DEFROOT It Ren END n
+DEFROOT Knowledge Saşb END f
+DEFROOT Leg Yab END m
+DEFROOT Life Raç END n
+DEFROOT Light Şen END n
+DEFROOT Liquid Płyn END m
+DEFROOT Magic Şūf END f
+DEFROOT Many Mnoly END p
+DEFROOT Meta Çek END n
+DEFROOT Monster Potb END m
+DEFROOT Motion Mur END m
+DEFROOT Nine Ṉon END n
+DEFROOT No Ṉe NOTE [Irregular ending]
+DEFROOT Of Ƶy NOTE [Irregular ending]
+DEFROOT One Ş END n
+DEFROOT Person Saşed END f
+DEFROOT Place Metiam END m
+DEFROOT Plant Ƶkał END m
+DEFROOT Query Puyt END f
+DEFROOT Rock Zem END m
+DEFROOT Rodent Yurş END m
+DEFROOT Seven Şim END n
+DEFROOT She Ren END f
+DEFROOT Simple Bōvim END n
+DEFROOT Six Łisl END n
+DEFROOT Sly Zişomn END f
+DEFROOT Small Skob END m
+DEFROOT Snake Zişed END f
+DEFROOT So Lin NOTE [Irregular ending]
+DEFROOT Some Ƶapen END n
+DEFROOT Soul Lotł END n
+DEFROOT Spring Palt END f
+DEFROOT Stable Ƶteb END m
+DEFROOT Summer Viazd END f
+DEFROOT The [] NOTE ["The" does not exist in Fira as it is implied]
+DEFROOT They Peł END p
+DEFROOT Three Puiv END n
+DEFROOT Time Çim END f
+DEFROOT [To Adventure] Krīne
+DEFROOT [To Be] Uçe
+DEFROOT [To Cause] Dovaçe
+DEFROOT [To Cut] Zuçe
+DEFROOT [To Drink] Navode
+DEFROOT [To Give] Vaşe
+DEFROOT [To Go] Keşe
+DEFROOT [To Kill] Zabe
+DEFROOT [To Own] Yope
+DEFROOT [To Prepare] Valsmīe
+DEFROOT [To Protect] Krye
+DEFROOT [To Say] Vymiçe
+DEFROOT [To See] Zovere
+DEFROOT [To Sit] Laksove
+DEFROOT [To Smile] Biłe
+DEFROOT [To Take] Napre
+DEFROOT [To Thaw] Sūlpne
+DEFROOT [To Use] Maƶie
+DEFROOT [To Wear] Kyre
+DEFROOT Together Yopūç
+DEFROOT Tool Łan END f
+DEFROOT Truth Putn END f
+DEFROOT Two Ład END n
+DEFROOT We Pok END p
+DEFROOT Whole Ciłet END f
+DEFROOT Winter Pūƶn END f
+DEFROOT World Zemi END f
+DEFROOT Wurm Ƶm END m
+DEFROOT Yes Pan
+DEFROOT You_Plur Puł END p
+DEFROOT You_Sing Run END f
+DEFROOT Zero P END n
+DEFROOT Language Fiṟ END f
+DEFROOT Hair Fūf END m
+DEFROOT Ṉkī Ṉk END m
+DEFROOT Gnomish Yenƶeca
