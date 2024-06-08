@@ -108,7 +108,7 @@ class Instructions:
             returndict = self.defroot(command_list[:i]) # Recursion without this subcommand
             if command_list[i] == "GENDER":
                 gender_dict = {"m": "_masculine", "f": "_feminine", "n": "_neutral", "p": "_plural"}
-                returndict["wordFira"] += self.translate(f"{gender_dict[command_list[i+1]]} TO f")
+                returndict["wordFira"] += self.translate(f"{gender_dict[command_list[i+1]]} TO f".split(" "))
             elif command_list[i] == "NOTE":
                 returndict["note"] = command_list[i+1]
 
