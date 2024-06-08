@@ -80,7 +80,9 @@ class Instructions:
         elif command_list[0] == "EXIT":
             return True
         else:
-            raise FSSyntaxError(f"ERROR: Invalid command: 「{command_list[0]}」.")
+            #raise FSSyntaxError(f"ERROR: Invalid command: 「{command_list[0]}」.")
+             # Implicit TRANSLATE
+            print(self.translate(command_list+["TO","Fira"], silent=self.silent).capitalize())
         return False
 
     def defroot(self, command_list: list[str], **kwargs) -> dict[str, str]:
