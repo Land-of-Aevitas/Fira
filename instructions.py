@@ -49,40 +49,40 @@ class Instructions:
                         command_list.pop(i+1)
                 # Remove the quotes
                 command_list[i] = command_list[i][1:-1]
-        if command_list[0] == "":
-            pass
-        elif command_list[0] == "DEFROOT":
-            defroot_dict = self.defroot(command_list[1:], silent=self.silent)
-            self.root_word_table.add_record(
-                "\""+defroot_dict["wordEng"].lower()+"\"", 
-                "\""+defroot_dict["wordFira"].lower()+"\"", 
-                "\""+defroot_dict["note"]+"\"")
-        elif command_list[0] == "DEFWORD":
-            defword_dict = self.defword(command_list[1:], silent=self.silent)
-            self.word_table.add_record(
-                "\""+defword_dict["wordEng"].lower()+"\"", 
-                "\""+defword_dict["wordFira"].lower()+"\"", 
-                "\""+line+"\"", 
-                "\""+defword_dict["note"]+"\"")
-        elif command_list[0] == "LISTWORDS":
-            self.listwords(command_list[1:], silent=self.silent)
-        elif command_list[0] == "TRANSLATE":
-            print(self.translate(command_list[1:], silent=self.silent).capitalize())
-        elif command_list[0] == "DELETE":
-            self.delete(command_list[1:], silent=self.silent)
-        elif command_list[0] == "HELP":
-            for i in self.help(silent=self.silent):
-                print(i)
-        elif command_list[0] == "READ":
-            return self.read(command_list[1:], depth)
-        elif command_list[0] == "DEBUG":
-            self.debug(command_list[1:])
-        elif command_list[0] == "EXIT":
-            return True
-        else:
-            #raise FSSyntaxError(f"ERROR: Invalid command: 「{command_list[0]}」.")
-             # Implicit TRANSLATE
-            print(self.translate(command_list+["TO","Fira"], silent=self.silent).capitalize())
+        match command_list[0]:
+            case "":
+                pass
+            case "DEFROOT":
+                defroot_dict = self.defroot(command_list[1:], silent=self.silent)
+                self.root_word_table.add_record(
+                    "\""+defroot_dict["wordEng"].lower()+"\"", 
+                    "\""+defroot_dict["wordFira"].lower()+"\"", 
+                    "\""+defroot_dict["note"]+"\"")
+            case "DEFWORD":
+                defword_dict = self.defword(command_list[1:], silent=self.silent)
+                self.word_table.add_record(
+                    "\""+defword_dict["wordEng"].lower()+"\"", 
+                    "\""+defword_dict["wordFira"].lower()+"\"", 
+                    "\""+line+"\"", 
+                    "\""+defword_dict["note"]+"\"")
+            case "LISTWORDS":
+                self.listwords(command_list[1:], silent=self.silent)
+            case "TRANSLATE":
+                print(self.translate(command_list[1:], silent=self.silent).capitalize())
+            case "DELETE":
+                self.delete(command_list[1:], silent=self.silent)
+            case "HELP":
+                for i in self.help(silent=self.silent):
+                    print(i)
+            case "READ":
+                return self.read(command_list[1:], depth)
+            case "DEBUG":
+                self.debug(command_list[1:])
+            case "EXIT":
+                return True
+            case _: # Implicit TRANSLATE
+                #raise FSSyntaxError(f"ERROR: Invalid command: 「{command_list[0]}」.")
+                print(self.translate(command_list+["TO","Fira"], silent=self.silent).capitalize())
         return False
 
     def defroot(self, command_list: list[str], **kwargs) -> dict[str, str]:
@@ -101,16 +101,18 @@ class Instructions:
 
         if len(command_list) > 2:
             for i in range(len(command_list)-1, -1, -1):
-                if command_list[i] in ["GENDER", "NOTE"]:
-                    break
+                match command_list[i]:
+                    case "GENDER":
+                        returndict = self.defroot(command_list[:i]) # Recursion without this subcommand
+                        gender_dict = {"m": "_masculine", "f": "_feminine", "n": "_neutral", "p": "_plural"}
+                        returndict["wordFira"] += self.translate(f"{gender_dict[command_list[i+1]]} TO f".split(" "))
+                        break
+                    case "NOTE":
+                        returndict = self.defroot(command_list[:i]) # Recursion without this subcommand
+                        returndict["note"] = command_list[i+1]
+                        break
             if i == 0:
                 raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
-            returndict = self.defroot(command_list[:i]) # Recursion without this subcommand
-            if command_list[i] == "GENDER":
-                gender_dict = {"m": "_masculine", "f": "_feminine", "n": "_neutral", "p": "_plural"}
-                returndict["wordFira"] += self.translate(f"{gender_dict[command_list[i+1]]} TO f".split(" "))
-            elif command_list[i] == "NOTE":
-                returndict["note"] = command_list[i+1]
 
         if not silent:
             print("DONE") # Proccessing complete
@@ -140,20 +142,24 @@ class Instructions:
             }
 
         for i in range(len(command_list)-1, -1, -1):
-            if command_list[i] in ["WITH", "GENDER", "NOTE"]:
-                break
-        if i != 0:
-            returndict = self.defword(list(command_list[:i]), iteration=True) # Recursion without this subcommand
-            if command_list[i] == "WITH":
-                returndict["with_type"] = command_list[i+1]
-                returndict["with_params"] = command_list[i+2:]
-                command_list = command_list[:i]
-            elif command_list[i] == "GENDER":
-                gender_dict = {"m": "Masculine", "f": "Feminine", "n": "Neutral", "p": "Plural"}
-                returndict["append"] += self.translate([gender_dict[command_list[i+1]], "TO", "Fira"])
-            elif command_list[i] == "NOTE":
-                returndict["note"] = command_list[i+1]
-        else: # Base case
+            match command_list[i]:
+                case "WITH":
+                    returndict = self.defword(list(command_list[:i]), iteration=True) # Recursion without this subcommand
+                    returndict["with_type"] = command_list[i+1]
+                    returndict["with_params"] = command_list[i+2:]
+                    command_list = command_list[:i]
+                    break
+                case "GENDER":
+                    returndict = self.defword(list(command_list[:i]), iteration=True) # Recursion without this subcommand
+                    returndict["with_type"] = command_list[i+1]
+                    returndict["with_params"] = command_list[i+2:]
+                    command_list = command_list[:i]
+                    break
+                case "NOTE":
+                    returndict = self.defword(list(command_list[:i]), iteration=True) # Recursion without this subcommand
+                    returndict["note"] = command_list[i+1]
+                    break
+        if i == 0: # Base case
              # Remove engWord and FROM
             returndict["wordEng"] = command_list[0]
             command_list = command_list[2:]
@@ -206,34 +212,30 @@ class Instructions:
             columns = ["wordEng", "wordFira"]
 
         # Check params
-        if len(command_list) == 1:
-            # No optional params
-            pass
-        elif len(command_list) > 1:
-            while len(command_list) > 1:
-                for i in range(len(command_list)-1, -1, -1):
-                    if command_list[i] in ["LANG", "TYPE", "NOTE"]:
-                        break
-                if i == 0:
-                    raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
-                if command_list[i] == "LANG":
-                    if command_list[i+1] == "e":
-                        conditions = [f"wordEng = \"{command_list[0].lower()}\""]
-                    elif command_list[i+1] == "f":
-                        conditions = [f"wordFira = \"{command_list[0].lower()}\""]
-                    else:
-                        raise FSSyntaxError(f"{func_name} ERROR: Invalid LANG value in 「{' '.join(command_list)}」.")
-                elif command_list[i] == "TYPE":
-                    if command_list[i+1] == "r":
-                        tables = [self.root_word_table]
-                    elif command_list[i+1] == "c":
-                        tables = [self.word_table]
-                    else:
-                        raise FSSyntaxError(f"{func_name} ERROR: Invalid TYPE value in 「{' '.join(command_list)}」.")
-                elif command_list[i] == "NOTE":
-                    columns.append("note")
-
-                command_list = command_list[:i]
+        while len(command_list) > 1: # Has optional params
+            for i in range(len(command_list)-1, -1, -1):
+                match command_list[i]:
+                    case "LANG":
+                        match command_list[i+1]:
+                            case "e":
+                                conditions = [f"wordEng = \"{command_list[0]}\""]
+                            case "f":
+                                conditions = [f"wordFira = \"{command_list[0]}\""]
+                            case _:
+                                raise FSSyntaxError(f"{func_name} ERROR: Invalid LANG value in 「{' '.join(command_list)}」.")
+                    case "TYPE":
+                        match command_list[i+1]:
+                            case "r":
+                                tables = [self.root_word_table]
+                            case "c":
+                                tables = [self.word_table]
+                            case _:
+                                raise FSSyntaxError(f"{func_name} ERROR: Invalid TYPE value in 「{' '.join(command_list)}」.")
+                    case "NOTE":
+                        columns.append("note")
+            if i == 0:
+                raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
+            command_list = command_list[:i] # Remove the last subcommand
 
         if not silent:
             print("DONE") # Proccessing complete
@@ -358,36 +360,37 @@ class Instructions:
                 break
         if i > 0:
             self.debug(command_list[:i]) # Recursion without this subcommand
-        if command_list[i] == "SILENT":
-            if i == len(command_list)-1: # No param
-                self.silent = not self.silent
-            else:
-                if command_list[i+1].lower() in ["true", "t", "1"]:
-                    self.silent = True
-                elif command_list[i+1].lower() in ["false", "f", "0"]:
-                    self.silent = False
+        match command_list[i]:
+            case "SILENT":
+                if i == len(command_list)-1: # No param
+                    self.silent = not self.silent
                 else:
-                    raise FSSyntaxError(f"{func_name} ERROR: Invalid SILENT value in 「{' '.join(command_list)}」.")
-            print(f"Silent mode set to {self.silent}.")
-        elif command_list[i] == "MAX-RECUR":
-            old_max = self.max_recursion_depth
-            if i == len(command_list)-1: # No param
-                self.max_recursion_depth = 10
-            else:
-                try:
-                    self.max_recursion_depth = int(command_list[i+1])
-                except ValueError as e:
-                    raise FSSyntaxError(f"{func_name} ERROR: Invalid MAX-RECUR value in 「{' '.join(command_list)}」.") from e
-            print(f"Max recursion depth updated from {old_max} to {self.max_recursion_depth}.")
-        elif command_list[i] == "PRINT-READ": # Toggle printing the current read file line number
-            if i == len(command_list)-1: # No param
-                self.print_read = not self.print_read
-            else:
-                if command_list[i+1].lower() in ["true", "t", "1"]:
-                    self.print_read = True
-                elif command_list[i+1].lower() in ["false", "f", "0"]:
-                    self.print_read = False
+                    if command_list[i+1].lower() in ["true", "t", "1"]:
+                        self.silent = True
+                    elif command_list[i+1].lower() in ["false", "f", "0"]:
+                        self.silent = False
+                    else:
+                        raise FSSyntaxError(f"{func_name} ERROR: Invalid SILENT value in 「{' '.join(command_list)}」.")
+                print(f"Silent mode set to {self.silent}.")
+            case "MAX-RECUR":
+                old_max = self.max_recursion_depth
+                if i == len(command_list)-1: # No param
+                    self.max_recursion_depth = 10
                 else:
-                    raise FSSyntaxError(f"{func_name} ERROR: Invalid PRINT-READ value in 「{' '.join(command_list)}」.")
-        else:
-            raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
+                    try:
+                        self.max_recursion_depth = int(command_list[i+1])
+                    except ValueError as e:
+                        raise FSSyntaxError(f"{func_name} ERROR: Invalid MAX-RECUR value in 「{' '.join(command_list)}」.") from e
+                print(f"Max recursion depth updated from {old_max} to {self.max_recursion_depth}.")
+            case "PRINT-READ": # Toggle printing the current read file line number
+                if i == len(command_list)-1: # No param
+                    self.print_read = not self.print_read
+                else:
+                    if command_list[i+1].lower() in ["true", "t", "1"]:
+                        self.print_read = True
+                    elif command_list[i+1].lower() in ["false", "f", "0"]:
+                        self.print_read = False
+                    else:
+                        raise FSSyntaxError(f"{func_name} ERROR: Invalid PRINT-READ value in 「{' '.join(command_list)}」.")
+            case _:
+                raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
