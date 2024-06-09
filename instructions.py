@@ -82,6 +82,8 @@ class Instructions:
                 return self.read(command_list[1:], depth)
             case "DEBUG":
                 self.debug(command_list[1:])
+            case "#": # Comment
+                pass
             case "EXIT":
                 return True
             case _: # Implicit TRANSLATE
