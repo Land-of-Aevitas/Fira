@@ -57,15 +57,15 @@ class Instructions:
             case "DEFROOT":
                 defroot_dict = self.defroot(command_list[1:], silent=self.silent)
                 self.root_word_table.add_record(
-                    f"\"{defroot_dict["wordEng"].lower()}\"", 
-                    f"\"{defroot_dict["wordFira"].lower()}\"", 
+                    f"\"{defroot_dict["wordEng"].lower()}\"",
+                    f"\"{defroot_dict["wordFira"].lower()}\"",
                     f"\"{defroot_dict["note"]}\"")
             case "DEFWORD":
                 defword_dict = self.defword(command_list[1:], silent=self.silent)
                 self.word_table.add_record(
-                    f"\"{defword_dict["wordEng"].lower()}\"", 
-                    f"\"{defword_dict["wordFira"].lower()}\"", 
-                    f"\"{line}\"", 
+                    f"\"{defword_dict["wordEng"].lower()}\"",
+                    f"\"{defword_dict["wordFira"].lower()}\"",
+                    f"\"{line}\"",
                     f"\"{defword_dict["note"]}\"")
             case "LISTWORDS":
                 self.listwords(command_list[1:], silent=self.silent)
