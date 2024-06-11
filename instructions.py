@@ -15,7 +15,7 @@ class Instructions:
         self.max_recursion_depth = 10
         self.print_read = False
 
-    END_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural"}
+    END_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural", "v": "_Verb"}
 
     def set_tables(self, root_word_table: sql.Table, word_table: sql.Table) -> None:
         '''Sets the tables for the Instructions.'''
