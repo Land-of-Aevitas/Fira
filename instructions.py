@@ -69,8 +69,6 @@ class Instructions:
                     f"\"{defword_dict["wordEng"].lower()}\"",
                     f"\"{defword_dict["wordFira"].lower()}\"",
                     f"\"{line}\"",
-                    f"\"{defword_dict["note"]}\""
-                )
             case "DEFNUM":
                 defnum_dict = self.defnum(command_list[1:], silent=self.silent)
                 self.num_table.add_record(
@@ -94,6 +92,8 @@ class Instructions:
                 return self.read(command_list[1:], depth)
             case "DEBUG":
                 self.debug(command_list[1:])
+            case "#": # Comment
+                pass
             case "EXIT":
                 return True
             case _: # Implicit TRANSLATE

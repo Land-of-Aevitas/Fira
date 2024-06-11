@@ -1,4 +1,7 @@
+# Print all lines as they are read
+DEBUG PRINT-READ
 
+# Basic words for other definitions
 DEFROOT _feminine a
 DEFROOT _masculine ī
 DEFROOT _neutral ū
@@ -13,9 +16,11 @@ DEFROOT _place iamī
 DEFROOT _subject ş
 DEFROOT _verb e
 
+# Update
 UPDATE _feminine aa
 
 DEFROOT r_Liquid Płyn
+# Defword, end, note
 DEFWORD Liquid FROM r_Liquid END m NOTE [Testing DEFWORD and END]
 
 DEFROOT r_Flame Çem
@@ -30,8 +35,6 @@ DEFROOT Person Saşeda
 DEFROOT Knowledge Saşba
 DEFWORD God FROM Person Knowledge WITH SLICE 0 2 3 0
 DEFWORD Holy FROM Of God WITH JOIN [ ] NOTE [Test for WITH JOIN - note that brackets can be used to get a space char]
-
-DEBUG PRINT-READ
 
 DEFROOT Zero Pū
 DEFROOT One Şū

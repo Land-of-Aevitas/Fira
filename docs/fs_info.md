@@ -29,12 +29,12 @@ Complex word - stored in the wordTable. Defined in terms of other words and so c
 
 ## Other commands
   - `HELP`: Prints this page to the console.
-  - `EXIT`: Exits the program.
-  - `# <string>`: Used to leave comments in the code
   - `READ <file location>`: Reads the file at the specified address and executes it. It must be a .fira file!
   - `DEBUG <debug command>`: Groups commands used for debugging
     - `SILENT <T|F>`: Sets whether to call top-level commands silently. Boolean `<T|F>` is optional and, if excluded, toggles the current silent value.
     - `MAX-RECUR <int>`: Changes the max recursion depth to `<int>`. This is relevant to files that read other files. `<int>` is optional and defaults to 10.
+  - `# <string>`: Used to leave comments in the code
+  - `EXIT`: Exits the program.
 
 # General terminology
   - Command: One line, consisting of an instruction and any relevant parameters.
