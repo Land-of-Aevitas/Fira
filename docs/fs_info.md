@@ -13,6 +13,8 @@ Complex word - stored in the wordTable. Defined in terms of other words and so c
     - `WITH JOIN <string>`:  Adds the string between each word. If no string is provided, it defaults to `""`.
   - `END <m|M|f|F|n|N|p|P>`: Adds a gendered or other ending to the word: `m` = Masculine, `f` = Feminine, `n` = Neutral, `p` = Plural. Use a capitalised letter to replace the last letter of the word instead of appending to it.
   - `NOTE <string>` Adds a note in the .db file next to this word's entry.
+- `DEFNUM <wordEng> <int>`: Defines a number in the Fira number system. `wordEng` is the English translation, e.g. "Seventy", and `int` is the numerical value, e.g. "70". This is stored in the numWordTable. This searches the root and complex tables for translations of digits, ("zero", "one", "two", etc.) so make sure that theses are defined before calling this function.
+  - `NOTE <string>` Adds a note in the .db file next to this word's entry. (Why would you do this? It's a number!)
 
 ## Retrieving Words
 - `LIST <string> <params>`: Lists all words that match the string. Leave blank to list all words.

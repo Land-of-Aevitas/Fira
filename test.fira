@@ -35,3 +35,23 @@ DEFROOT Person Saşeda
 DEFROOT Knowledge Saşba
 DEFWORD God FROM Person Knowledge WITH SLICE 0 2 3 0
 DEFWORD Holy FROM Of God WITH JOIN [ ] NOTE [Test for WITH JOIN - note that brackets can be used to get a space char]
+
+DEFROOT Zero Pū
+DEFROOT One Şū
+DEFROOT Two Ładū
+DEFROOT Three Puivū
+DEFROOT Four Ştū
+DEFROOT Five Cavū
+DEFROOT Six Łislū
+DEFROOT Seven Şimū
+DEFROOT Eight Devyū
+DEFROOT Nine Ṉonū
+DEFROOT And Veƶ
+
+DEFNUM Tw 12
+DEFNUM Tff 255
+DEFNUM Fh 500
+DEFNUM Mill 1000000
+DEFNUM Ten 10
+DEFNUM Ooo 101
+DEFNUM Big 9008700
