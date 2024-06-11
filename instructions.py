@@ -13,7 +13,7 @@ class Instructions:
         self.max_recursion_depth = 10
         self.print_read = False
 
-    END_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural"} # Used for the END subcommand
+    END_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural", "v": "_Verb"} # Used for the END subcommand
     DIGIT_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"] # Used for DEFNUM
     root_word_table: sql.Table = None
     word_table: sql.Table = None
