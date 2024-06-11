@@ -59,11 +59,11 @@ class FiraScript: # pylint: disable=R0903
                 sql_connection,
                 "numTable",
                 [
-                    "wordEng STRING NOT NULL", 
-                    "wordFira STRING NOT NULL", 
                     "value INT NOT NULL", 
+                    "wordEng STRING NOT NULL UNIQUE", 
+                    "wordFira STRING NOT NULL UNIQUE", 
                     "note STRING", 
-                    "PRIMARY KEY (wordEng, wordFira)"
+                    "PRIMARY KEY (value)"
                 ]
             )
         }

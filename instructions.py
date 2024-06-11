@@ -75,9 +75,9 @@ class Instructions:
             case "DEFNUM":
                 defnum_dict = self.defnum(command_list[1:], silent=self.silent)
                 self.num_table.add_record(
+                    f"\"{defnum_dict["value"]}\"",
                     f"\"{defnum_dict["wordEng"].lower()}\"",
                     f"\"{defnum_dict["wordFira"].lower()}\"",
-                    f"\"{defnum_dict["value"]}\"",
                     f"\"{defnum_dict["note"]}\""
                 )
             case "LISTWORDS":
