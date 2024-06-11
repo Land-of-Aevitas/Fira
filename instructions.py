@@ -8,8 +8,6 @@ from fs_errors import FSError, FSSyntaxError, FSRecursionError
 class Instructions:
     '''Instructions for the FiraScript language.'''
     def __init__(self) -> None:
-        self.root_word_table: sql.Table = None
-        self.word_table: sql.Table = None
          # Settings - can be changed with the DEBUG command
         self.silent = True
         self.max_recursion_depth = 10
@@ -17,6 +15,9 @@ class Instructions:
 
     END_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural"} # Used for the END subcommand
     DIGIT_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"] # Used for DEFNUM
+    root_word_table: sql.Table = None
+    word_table: sql.Table = None
+    num_table: sql.Table = None
 
     def set_tables(self, tables: dict[str, sql.Table]) -> None:
         '''Sets the tables for the Instructions.'''
@@ -69,6 +70,8 @@ class Instructions:
                     f"\"{defword_dict["wordEng"].lower()}\"",
                     f"\"{defword_dict["wordFira"].lower()}\"",
                     f"\"{line}\"",
+                    f"\"{defword_dict["note"]}\""
+                )
             case "DEFNUM":
                 defnum_dict = self.defnum(command_list[1:], silent=self.silent)
                 self.num_table.add_record(
@@ -246,10 +249,9 @@ class Instructions:
                 translated_num.append(*self._translate_num(zero_count, fold=False))
 
         if not silent:
+            print("translated_num", translated_num)
             print("DONE") # Proccessing complete
 
-        print(translated_num)
-        print(type(translated_num))
         return "-".join(translated_num) if fold else translated_num
 
     def defnum(self, command_list: list[str], **kwargs) -> dict[str, int|str]:

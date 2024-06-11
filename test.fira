@@ -16,6 +16,8 @@ DEFROOT _place iamī
 DEFROOT _subject ş
 DEFROOT _verb e
 
+TRANSLATE _place TO f
+
 # Update
 UPDATE _feminine aa
 
@@ -48,10 +50,10 @@ DEFROOT Eight Devyū
 DEFROOT Nine Ṉonū
 DEFROOT And Veƶ
 
-DEFNUM Tw 12
-DEFNUM Tff 255
-DEFNUM Fh 500
-DEFNUM Mill 1000000
+DEFNUM Twelve 12
+DEFNUM TwoHundredAndFiftyFive 255
+DEFNUM FiveHundred 500
+DEFNUM Million 1000000
 DEFNUM Ten 10
-DEFNUM Ooo 101
-DEFNUM Big 9008700
+DEFNUM OneHundredAndOne 101
+DEFNUM NineMillionEightThousandSevenHundred 9008700
