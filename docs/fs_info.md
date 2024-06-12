@@ -13,6 +13,8 @@ Complex word - stored in the wordTable. Defined in terms of other words and so c
     - `WITH JOIN <string>`:  Adds the string between each word. If no string is provided, it defaults to `""`.
   - `END <m|M|f|F|n|N|p|P>`: Adds a gendered or other ending to the word: `m` = Masculine, `f` = Feminine, `n` = Neutral, `p` = Plural. Use a capitalised letter to replace the last letter of the word instead of appending to it.
   - `NOTE <string>` Adds a note in the .db file next to this word's entry.
+- `DEFNUM <wordEng> <int>`: Defines a number in the Fira number system. `wordEng` is the English translation, e.g. "Seventy", and `int` is the numerical value, e.g. "70". This is stored in the numWordTable. This searches the root and complex tables for translations of digits, ("zero", "one", "two", etc.) so make sure that theses are defined before calling this function.
+  - `NOTE <string>` Adds a note in the .db file next to this word's entry. (Why would you do this? It's a number!)
 
 ## Retrieving Words
 - `LIST <string> <params>`: Lists all words that match the string. Leave blank to list all words.
@@ -27,12 +29,12 @@ Complex word - stored in the wordTable. Defined in terms of other words and so c
 
 ## Other commands
   - `HELP`: Prints this page to the console.
-  - `EXIT`: Exits the program.
-  - `# <string>`: Used to leave comments in the code
   - `READ <file location>`: Reads the file at the specified address and executes it. It must be a .fira file!
   - `DEBUG <debug command>`: Groups commands used for debugging
     - `SILENT <T|F>`: Sets whether to call top-level commands silently. Boolean `<T|F>` is optional and, if excluded, toggles the current silent value.
     - `MAX-RECUR <int>`: Changes the max recursion depth to `<int>`. This is relevant to files that read other files. `<int>` is optional and defaults to 10.
+  - `# <string>`: Used to leave comments in the code
+  - `EXIT`: Exits the program.
 
 # General terminology
   - Command: One line, consisting of an instruction and any relevant parameters.

@@ -8,19 +8,22 @@ from fs_errors import FSError, FSSyntaxError, FSRecursionError
 class Instructions:
     '''Instructions for the FiraScript language.'''
     def __init__(self) -> None:
-        self.root_word_table: sql.Table = None
-        self.word_table: sql.Table = None
          # Settings - can be changed with the DEBUG command
         self.silent = True
         self.max_recursion_depth = 10
         self.print_read = False
 
-    END_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural"}
+    END_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural", "v": "_Verb"} # Used for the END subcommand
+    DIGIT_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"] # Used for DEFNUM
+    root_word_table: sql.Table = None
+    word_table: sql.Table = None
+    num_table: sql.Table = None
 
-    def set_tables(self, root_word_table: sql.Table, word_table: sql.Table) -> None:
+    def set_tables(self, tables: dict[str, sql.Table]) -> None:
         '''Sets the tables for the Instructions.'''
-        self.root_word_table = root_word_table
-        self.word_table = word_table
+        self.root_word_table = tables["root"]
+        self.word_table = tables["complex"]
+        self.num_table = tables["num"]
 
 
     def decode(self, line: str, **kwargs) -> bool:
@@ -52,21 +55,31 @@ class Instructions:
                 # Remove the quotes
                 command_list[i] = command_list[i][1:-1]
         match command_list[0]:
-            case "":
+            case "" | "#":
                 pass
             case "DEFROOT":
                 defroot_dict = self.defroot(command_list[1:], silent=self.silent)
                 self.root_word_table.add_record(
-                    "\""+defroot_dict["wordEng"].lower()+"\"", 
-                    "\""+defroot_dict["wordFira"].lower()+"\"", 
-                    "\""+defroot_dict["note"]+"\"")
+                    f"\"{defroot_dict["wordEng"].lower()}\"",
+                    f"\"{defroot_dict["wordFira"].lower()}\"",
+                    f"\"{defroot_dict["note"]}\""
+                )
             case "DEFWORD":
                 defword_dict = self.defword(command_list[1:], silent=self.silent)
                 self.word_table.add_record(
-                    "\""+defword_dict["wordEng"].lower()+"\"", 
-                    "\""+defword_dict["wordFira"].lower()+"\"", 
-                    "\""+line+"\"", 
-                    "\""+defword_dict["note"]+"\"")
+                    f"\"{defword_dict["wordEng"].lower()}\"",
+                    f"\"{defword_dict["wordFira"].lower()}\"",
+                    f"\"{line}\"",
+                    f"\"{defword_dict["note"]}\""
+                )
+            case "DEFNUM":
+                defnum_dict = self.defnum(command_list[1:], silent=self.silent)
+                self.num_table.add_record(
+                    f"\"{defnum_dict["value"]}\"",
+                    f"\"{defnum_dict["wordEng"].lower()}\"",
+                    f"\"{defnum_dict["wordFira"].lower()}\"",
+                    f"\"{defnum_dict["note"]}\""
+                )
             case "LISTWORDS":
                 self.listwords(command_list[1:], silent=self.silent)
             case "TRANSLATE":
@@ -82,6 +95,8 @@ class Instructions:
                 return self.read(command_list[1:], depth)
             case "DEBUG":
                 self.debug(command_list[1:])
+            case "#": # Comment
+                pass
             case "EXIT":
                 return True
             case _: # Implicit TRANSLATE
@@ -200,6 +215,84 @@ class Instructions:
             print("DONE") # Proccessing complete
 
         return returndict
+
+    def _translate_num(self, num: int|str, **kwargs) -> str|list[str]:
+        '''ONLY USED BY DEFNUM for recursion. Translates a number.'''
+         # Kwargs
+        silent = kwargs.get("silent", True)
+        fold = kwargs.get("fold", True)
+
+        func_name = "TRANSLATE_NUM"
+        if not silent:
+            print(func_name, num, end=" ... ") # Begin proccessing
+
+        in_zero, zero_count = False, 0
+        translated_num = []
+        for _, digit in enumerate(str(num)):
+            if digit == "0":
+                if in_zero:
+                    zero_count += 1
+                else:
+                    in_zero = True
+                    zero_count = 1
+            else:
+                if in_zero:
+                    translated_num.append(self.translate(["Zero", "TO", "f"]))
+                    if zero_count > 1:
+                        translated_num.append(*self._translate_num(zero_count, fold=False))
+                    translated_num.append(self.translate(["And", "TO", "f"]))
+                    in_zero = False
+                translated_num.append(self.translate([self.DIGIT_WORDS[int(digit)], "TO", "f"]))
+        if in_zero: # Trailing zeros
+            translated_num.append(self.translate(["Zero", "TO", "f"]))
+            if zero_count > 1:
+                translated_num.append(*self._translate_num(zero_count, fold=False))
+
+        if not silent:
+            print("translated_num", translated_num)
+            print("DONE") # Proccessing complete
+
+        return "-".join(translated_num) if fold else translated_num
+
+    def defnum(self, command_list: list[str], **kwargs) -> dict[str, int|str]:
+        '''Defines a number.'''
+         # Kwargs
+        silent = kwargs.get("silent", True)
+
+        func_name = "DEFNUM"
+        if not silent:
+            print(func_name, command_list, end=" ... ") # Begin proccessing
+
+        if empty(command_list):
+            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+        if len(command_list) < 2:
+            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
+        try:
+            value = int(command_list[1])
+        except ValueError as e:
+            raise FSSyntaxError(f"{func_name} ERROR: Invalid value in 「{' '.join(command_list)}」.") from e
+
+        returndict: dict[str, int|str] = {
+            "wordEng": command_list[0],
+            "wordFira": self._translate_num(value),
+            "value": value,
+            "note": ""
+        }
+
+        while len(command_list) > 2: # Has optional params
+            for i in range(len(command_list)-1, -1, -1):
+                match command_list[i]:
+                    case "NOTE":
+                        returndict["note"] = command_list[i+1]
+            if i == 0:
+                raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
+            command_list = command_list[:i] # Remove the subcommand
+
+        if not silent:
+            print("DONE") # Proccessing complete
+
+        return returndict
+
 
     def listwords(self, command_list: list[str], **kwargs) -> None:
         '''Lists all words that match a regex string.'''

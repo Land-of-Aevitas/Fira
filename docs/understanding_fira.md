@@ -1,5 +1,6 @@
 #### Syllable Shape
 CV (consonant-vowel) / CVC (consonant-vowel-consonant) syllable shape (open and closed syllables)
+Open syllables are generally preferred
 #### Stress System
 Put stress on the letter with a bar. In the absence of one, put stress on the penultimate syllable
 #### Word Order
@@ -85,12 +86,13 @@ Non-zero digits are simply listed in order with a dash in between. For example, 
 | ------ | ------------- | -------------- |
 | 12     | One-Two       | Şū-Ładū        |
 | 255    | Two-FIve-Five | Ładū-Cavū-Cavū |
-If multiple consecutive zeros appear in the number, write 'zero' followed by the number of zeroes
+If multiple consecutive zeros appear in the number, write 'zero' followed by the number of zeroes, unless there is only one zero in which case the 'one' is presumed.
 
 | Number  | English       | Fiṟa         |
 | ------- | ------------- | ------------ |
 | 500     | Five-Zero-Two | Cavū-Pū-Ładū |
 | 1000000 | One-Zero-Six  | Şū-Pū-Łislū  |
+| 10      | One-Zero      | Şū-Pū        |
 If non-zero numbers follow zeros, use 'Veƶ' ('and') to indicate the end of the zero count
 
 | Number  | English                                | Fiṟa                                |
