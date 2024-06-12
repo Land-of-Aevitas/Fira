@@ -1,0 +1,21 @@
+DEBUG PRINT-READ
+
+DEFROOT _feminine a
+DEFROOT _masculine ī
+DEFROOT _neutral ū
+DEFROOT _plural o
+
+DEFROOT _instance v
+DEFROOT _object p
+DEFROOT [_opposite quality] ƶyṉe
+DEFROOT [_passive valency] eo
+DEFROOT [_past tense] łem
+DEFROOT r_place iam
+DEFWORD _place FROM r_place END m
+DEFROOT _subject ş
+DEFROOT _verb e
+
+DEFROOT [r_to take] Napr
+DEFWORD [To Take] FROM [r_to take] END v
+
+DEFWORD Taking FROM [To Take] WITH DERIVE i END m

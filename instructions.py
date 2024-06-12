@@ -211,26 +211,34 @@ class Instructions:
                         case 1:
                             returndict["wordFira"] = returndict["with_params"][0].join(returndict["subwords"])
                         case _:
-                            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of WITH JOIN params in「{' '.join(command_list)}」.\nExpecting: 1, Found: {len(returndict['with_params'])}.")
+                            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of with_params in 「{' '.join(command_list)}」.")
                 case "DERIVE":
+                    if len(returndict["subwords"]) != 1:
+                        raise FSSyntaxError(f"{func_name} ERROR: WITH DERIVE must only have one subword 「{' '.join(command_list)}」.")
                     if len(returndict["with_params"]) != 1:
-                        raise FSSyntaxError(f"{func_name} ERROR: Invalid number of WITH DERIVE params in「{' '.join(command_list)}」.\nExpecting: 1, Found: {len(returndict['with_params'])}.")
-                    match returndict["with_params"][0]:
+                        raise FSSyntaxError(f"{func_name} ERROR: Invalid number of with_params in 「{' '.join(command_list)}」.")
+                    der_word, der_type = "", ""
+                    match returndict["with_params"][0].lower():
                         case "i"|"instance":
-                            pass
+                            der_word, der_type = "_Instance", "Instance"
                         case "s"|"subject":
-                            pass
+                            der_word, der_type = "_Subject", "Subject"
                         case "o"|"object":
-                            pass
+                            der_word, der_type = "_Object", "Object"
                         case "p"|"place":
-                            pass
+                            der_word, der_type = "_Place", "Place"
                         case "v"|"verb":
-                            pass
+                            der_word, der_type = "_Verb", "Verb"
                         case _:
-                            raise FSSyntaxError(f"{func_name} ERROR: Invalid WITH DERIVE param ({returndict["with_params"][0]}) in「{' '.join(command_list)}」.")
+                            raise FSSyntaxError(f"{func_name} ERROR: Invalid with_params value in 「{' '.join(command_list)}」.")
+                    derive = ""
+                    try:
+                        derive = self.translate([der_word, "TO", "f"])
+                    except FSError as e:
+                        raise FSSyntaxError(f"{func_name} ERROR: WITH DERIVE {der_type} Error: {e} in 「{' '.join(command_list)}」") from e
+                    returndict["wordFira"] = returndict["subwords"][0]+derive
                 case _:
-                    raise FSSyntaxError(f"{func_name} ERROR: Invalid WITH type ({returndict["with_type"]}) in 「{' '.join(command_list)}」.")
-            #print("append", returndict["wordFira"], returndict["append"])
+                    raise FSSyntaxError(f"{func_name} ERROR: Invalid WITH type in 「{' '.join(command_list)}」.")
             returndict["wordFira"] += returndict["append"]
 
         if not silent:
