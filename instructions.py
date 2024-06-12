@@ -106,10 +106,11 @@ class Instructions:
 
     def defroot(self, command_list: list[str], **kwargs) -> dict[str, str]:
         '''Defines a root word.'''
+        func_name = self.defroot.__name__.upper()
+
          # Kwargs
         silent = kwargs.get("silent", True)
 
-        func_name = "DEFROOT"
         if not silent:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
@@ -139,18 +140,20 @@ class Instructions:
 
     def defword(self, command_list: list[str], **kwargs) -> dict[str, list|str]:
         '''Defines a word.'''
+        func_name = self.defword.__name__.upper()
+
          # Kwargs
         silent = kwargs.get("silent", True)
         iteration = kwargs.get("iteration", False) # Whether this is an iteration of def_word and so should not apply WITH subcommands
 
-        func_name = "DEFWORD"
         if not silent:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
+         # Check params
         if empty(command_list):
             raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
         if len(command_list) < 3 or command_list[1] != "FROM":
-            raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> FROM <string> <params>'.")
+            raise FSSyntaxError(f"{self.defword.__name__.upper()} ERROR: 「{' '.join(command_list)}」 not in format '<string> FROM <string> <params>'.")
 
         returndict: dict[str, list|str] = {
             "wordEng": command_list[0], "wordFira": command_list[1], "note": "", # Used for the final return
@@ -245,11 +248,12 @@ class Instructions:
 
     def _translate_num(self, num: int|str, **kwargs) -> str|list[str]:
         '''ONLY USED BY DEFNUM for recursion. Translates a number.'''
+        func_name = self._translate_num.__name__.upper()
+
          # Kwargs
         silent = kwargs.get("silent", True)
         fold = kwargs.get("fold", True)
 
-        func_name = "TRANSLATE_NUM"
         if not silent:
             print(func_name, num, end=" ... ") # Begin proccessing
 
@@ -276,17 +280,17 @@ class Instructions:
                 translated_num.append(*self._translate_num(zero_count, fold=False))
 
         if not silent:
-            print("translated_num", translated_num)
             print("DONE") # Proccessing complete
 
         return "-".join(translated_num) if fold else translated_num
 
     def defnum(self, command_list: list[str], **kwargs) -> dict[str, int|str]:
         '''Defines a number.'''
+        func_name = self.defnum.__name__.upper()
+
          # Kwargs
         silent = kwargs.get("silent", True)
 
-        func_name = "DEFNUM"
         if not silent:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
@@ -323,10 +327,11 @@ class Instructions:
 
     def listwords(self, command_list: list[str], **kwargs) -> None:
         '''Lists all words that match a regex string.'''
+        func_name = self.listwords.__name__.upper()
+
          # Kwargs
         silent = kwargs.get("silent", True)
 
-        func_name = "LISTWORDS"
         if not silent:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
@@ -378,10 +383,11 @@ class Instructions:
 
     def translate(self, command_list: list[str], **kwargs) -> str:
         '''Translates a word.'''
+        func_name = self.translate.__name__.upper()
+
          # Kwargs
         silent = kwargs.get("silent", True)
 
-        func_name = "TRANSLATE"
         if not silent:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
@@ -417,10 +423,11 @@ class Instructions:
 
     def update(self, command_list: list[str], **kwargs) -> None:
         '''Updates a word.'''
+        func_name = self.update.__name__.upper()
+
          # Kwargs
         silent = kwargs.get("silent", True)
 
-        func_name = "UPDATE"
         if not silent:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
@@ -438,10 +445,11 @@ class Instructions:
 
     def delete(self, command_list: list[str], **kwargs) -> None:
         '''Deletes a word.'''
+        func_name = self.delete.__name__.upper()
+
          # Kwargs
         silent = kwargs.get("silent", True)
 
-        func_name = "DELETE"
         if not silent:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
@@ -457,10 +465,11 @@ class Instructions:
 
     def help(self, **kwargs) -> list[str]:
         '''Prints a list of commands.'''
+        func_name = self.help.__name__.upper()
+
          # Kwargs
         silent = kwargs.get("silent", True)
 
-        func_name = "HELP"
         if not silent:
             print(func_name, end=" ... ") # Begin proccessing
 
@@ -473,7 +482,7 @@ class Instructions:
 
     def read(self, command_list: list[str], depth: int = 0) -> bool:
         '''Reads a .fira file and executes the contents.'''
-        func_name = "READ"
+        func_name = self.read.__name__.upper()
 
          # Check for errors
         if empty(command_list) or len(command_list) != 1:
@@ -499,7 +508,8 @@ class Instructions:
 
     def debug(self, command_list: list[str]) -> None:
         '''Used for debugging.'''
-        func_name = "DEBUG"
+        func_name = self.debug.__name__.upper()
+
         if empty(command_list):
             raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
 
