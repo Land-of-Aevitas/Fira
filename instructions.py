@@ -3,7 +3,7 @@ import re
 from zemia.common import empty
 from zemia import sql, file
  # Local imports
-from fs_errors import FSError, FSSyntaxError, FSRecursionError
+import fs_errors as Fs
 
 class Instructions:
     '''Instructions for the FiraScript language.'''
@@ -14,10 +14,11 @@ class Instructions:
         self.print_read = False
 
     END_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural", "v": "_Verb"} # Used for the END subcommand
-    DIGIT_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"] # Used for DEFNUM
+    DIGIT_WORDS = ["Zero", "One", "Two", "three", "four", "five", "six", "seven", "eight", "nine"] # Used for DEFNUM
     root_word_table: sql.Table = None
     word_table: sql.Table = None
     num_table: sql.Table = None
+    db_path: str = ""
 
     def set_tables(self, tables: dict[str, sql.Table]) -> None:
         '''Sets the tables for the Instructions.'''
@@ -30,9 +31,11 @@ class Instructions:
         '''Reads a line of FiraScript.'''
          # Kwargs
         depth = kwargs.get("depth", 0)
+        if "db_path" in kwargs:
+            self.db_path = kwargs["db_path"]
 
         if depth > self.max_recursion_depth:
-            raise FSRecursionError(f"ERROR: Max recursion depth ({self.max_recursion_depth}) reached.")
+            raise Fs.FSRecursionError(f"ERROR: Max recursion depth ({self.max_recursion_depth}) reached.")
 
         command_list = line.split(" ")
         for i, command in enumerate(command_list):
@@ -115,7 +118,7 @@ class Instructions:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
         if empty(command_list):
-            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
 
         returndict = {"wordEng": command_list[0], "wordFira": command_list[1], "note": ""}
 
@@ -131,7 +134,7 @@ class Instructions:
                         returndict["note"] = command_list[i+1]
                         break
             if i == 0:
-                raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
+                raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
 
         if not silent:
             print("DONE") # Proccessing complete
@@ -151,9 +154,9 @@ class Instructions:
 
          # Check params
         if empty(command_list):
-            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
         if len(command_list) < 3 or command_list[1] != "FROM":
-            raise FSSyntaxError(f"{self.defword.__name__.upper()} ERROR: 「{' '.join(command_list)}」 not in format '<string> FROM <string> <params>'.")
+            raise Fs.FSSyntaxError(f"{self.defword.__name__.upper()} ERROR: 「{' '.join(command_list)}」 not in format '<string> FROM <string> <params>'.")
 
         returndict: dict[str, list|str] = {
             "wordEng": command_list[0], "wordFira": command_list[1], "note": "", # Used for the final return
@@ -188,8 +191,8 @@ class Instructions:
                     break
                 try:
                     returndict["subwords"].append(self.translate([command, "TO", "Fira"], silent=True))
-                except FSError as e:
-                    raise FSSyntaxError(f"{func_name} ERROR: Error in 「{' '.join(command_list)}」: {e}") from e
+                except Fs.FSError as e:
+                    raise Fs.FSSyntaxError(f"{func_name} ERROR: Error in 「{' '.join(command_list)}」: {e}") from e
 
         # Assemble the word
         if not iteration:
@@ -211,6 +214,7 @@ class Instructions:
                         case 1:
                             returndict["wordFira"] = returndict["with_params"][0].join(returndict["subwords"])
                         case _:
+                            raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid number of WITH JOIN params in「{' '.join(command_list)}」.\nExpecting: 1, Found: {len(returndict['with_params'])}.")
                             raise FSSyntaxError(f"{func_name} ERROR: Invalid number of with_params in 「{' '.join(command_list)}」.")
                 case "DERIVE":
                     if len(returndict["subwords"]) != 1:
@@ -295,13 +299,13 @@ class Instructions:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
         if empty(command_list):
-            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
         if len(command_list) < 2:
-            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
         try:
             value = int(command_list[1])
         except ValueError as e:
-            raise FSSyntaxError(f"{func_name} ERROR: Invalid value in 「{' '.join(command_list)}」.") from e
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid value in 「{' '.join(command_list)}」.") from e
 
         returndict: dict[str, int|str] = {
             "wordEng": command_list[0],
@@ -316,7 +320,7 @@ class Instructions:
                     case "NOTE":
                         returndict["note"] = command_list[i+1]
             if i == 0:
-                raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
+                raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
             command_list = command_list[:i] # Remove the subcommand
 
         if not silent:
@@ -354,7 +358,7 @@ class Instructions:
                             case "f":
                                 conditions = [f"wordFira = \"{command_list[0]}\""]
                             case _:
-                                raise FSSyntaxError(f"{func_name} ERROR: Invalid LANG value in 「{' '.join(command_list)}」.")
+                                raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid LANG value in 「{' '.join(command_list)}」.")
                     case "TYPE":
                         match command_list[i+1]:
                             case "r":
@@ -362,11 +366,11 @@ class Instructions:
                             case "c":
                                 tables = [self.word_table]
                             case _:
-                                raise FSSyntaxError(f"{func_name} ERROR: Invalid TYPE value in 「{' '.join(command_list)}」.")
+                                raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid TYPE value in 「{' '.join(command_list)}」.")
                     case "NOTE":
                         columns.append("note")
             if i == 0:
-                raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
+                raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
             command_list = command_list[:i] # Remove the last subcommand
 
         if not silent:
@@ -392,9 +396,9 @@ class Instructions:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
         if empty(command_list):
-            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
         if len(command_list) < 3:
-            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
 
         #return_dict: dict[str, list[str]] = {"words": []}
 
@@ -407,9 +411,9 @@ class Instructions:
                 root_translation = self.root_word_table.list_record(f"WHERE wordEng = \"{command_list[0].lower()}\"", "wordFira")
                 complex_translation = self.word_table.list_record(f"WHERE wordEng = \"{command_list[0].lower()}\"", "wordFira")
             else:
-                raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing <e|f>.")
+                raise Fs.FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing <e|f>.")
         else:
-            raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing TO.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing TO.")
 
         if not silent:
             print("DONE") # Proccessing complete
@@ -419,7 +423,7 @@ class Instructions:
         if len(complex_translation) > 0:
             return complex_translation[0][0]
 
-        raise FSSyntaxError(f"{func_name} ERROR: No translation found for 「{' '.join(command_list)}」.")
+        raise Fs.FSSyntaxError(f"{func_name} ERROR: No translation found for 「{' '.join(command_list)}」.")
 
     def update(self, command_list: list[str], **kwargs) -> None:
         '''Updates a word.'''
@@ -432,13 +436,13 @@ class Instructions:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
         if empty(command_list):
-            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
         if len(command_list) != 2:
-            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
 
         word_eng, word_fira = command_list[0].lower(), command_list[1].lower()
         if not self.root_word_table.update_record("wordFira", f"\"{word_fira}\"", f"WHERE wordEng = \"{word_eng}\""):
-            raise FSSyntaxError(f"{func_name} ERROR: No record found for 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: No record found for 「{' '.join(command_list)}」.")
 
         if not silent:
             print("DONE") # Proccessing complete
@@ -454,9 +458,9 @@ class Instructions:
             print(func_name, command_list, end=" ... ") # Begin proccessing
 
         if empty(command_list):
-            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
         if len(command_list) != 1:
-            raise FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string>'.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string>'.")
         self.root_word_table.delete_record(f"WHERE wordEng = \"{command_list[0].lower()}\" OR wordFira = \"{command_list[0].lower()}\"")
         self.word_table.delete_record(f"WHERE wordEng = \"{command_list[0].lower()}\" OR wordFira = \"{command_list[0].lower()}\"")
 
@@ -486,13 +490,15 @@ class Instructions:
 
          # Check for errors
         if empty(command_list) or len(command_list) != 1:
-            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid number of params in 「{' '.join(command_list)}」.")
         if not re.search(".fira$", command_list[0]):
-            raise FSSyntaxError(f"{func_name} ERROR: Invalid file type: 「{command_list[0]}」.")
+            # Not a .fira file - try adding '.fira' to it
+            return self.read([f"{command_list[0]}.fira"], depth)
+            #raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid file type: 「{command_list[0]}」.")
         try:
             f = file.read(command_list[0], "utf-8")
         except FileNotFoundError as e:
-            raise FSSyntaxError(f"{func_name} ERROR: File not found: 「{command_list[0]}」.") from e
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: File not found: 「{command_list[0]}」.") from e
 
          # Read the file line by line
         for line_number, file_line in enumerate(f):
@@ -502,8 +508,8 @@ class Instructions:
                 end = self.decode(file_line, depth=depth+1)
                 if end:
                     return True
-            except FSSyntaxError as e:
-                raise FSSyntaxError(f"{func_name} ERROR: Error in file 「{command_list[0]}」 at line {line_number+1}: {e}") from e
+            except Fs.FSSyntaxError as e:
+                raise Fs.FSSyntaxError(f"{func_name} ERROR: Error in file 「{command_list[0]}」 at line {line_number+1}: {e}") from e
         return False
 
     def debug(self, command_list: list[str]) -> None:
@@ -511,7 +517,7 @@ class Instructions:
         func_name = self.debug.__name__.upper()
 
         if empty(command_list):
-            raise FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
+            raise Fs.FSSyntaxError(f"{func_name} ERROR: No params provided in 「{' '.join(command_list)}」.")
 
         for i in range(len(command_list)-1, -1, -1):
             if command_list[i] in ["SILENT", "MAX-RECUR"]:
@@ -527,8 +533,9 @@ class Instructions:
                         self.silent = True
                     elif command_list[i+1].lower() in ["false", "f", "0"]:
                         self.silent = False
-                    else:
-                        raise FSSyntaxError(f"{func_name} ERROR: Invalid SILENT value in 「{' '.join(command_list)}」.")
+                    else: # toggle
+                        self.silent = not self.silent
+                        #raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid SILENT value in 「{' '.join(command_list)}」.")
                 print(f"Silent mode set to {self.silent}.")
             case "MAX-RECUR":
                 old_max = self.max_recursion_depth
@@ -538,7 +545,7 @@ class Instructions:
                     try:
                         self.max_recursion_depth = int(command_list[i+1])
                     except ValueError as e:
-                        raise FSSyntaxError(f"{func_name} ERROR: Invalid MAX-RECUR value in 「{' '.join(command_list)}」.") from e
+                        raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid MAX-RECUR value in 「{' '.join(command_list)}」.") from e
                 print(f"Max recursion depth updated from {old_max} to {self.max_recursion_depth}.")
             case "PRINT-READ": # Toggle printing the current read file line number
                 if i == len(command_list)-1: # No param
@@ -548,7 +555,14 @@ class Instructions:
                         self.print_read = True
                     elif command_list[i+1].lower() in ["false", "f", "0"]:
                         self.print_read = False
-                    else:
-                        raise FSSyntaxError(f"{func_name} ERROR: Invalid PRINT-READ value in 「{' '.join(command_list)}」.")
+                    else: # toggle
+                        self.silent = not self.silent
+                        #raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid PRINT-READ value in 「{' '.join(command_list)}」.")
+            case "RDB":
+                # Delete all records in the database
+                self.root_word_table.delete_record()
+                self.word_table.delete_record()
+                self.num_table.delete_record()
+                
             case _:
-                raise FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
+                raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
