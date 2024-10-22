@@ -2,10 +2,10 @@
 The main reader for 'FiraScript'.
 '''
  # Library imports
-from zemia import sql
+from zemia import sql, file
 from zemia.common import Colours
  # Local imports
-import fs_errors as Fs
+from fs_errors import FSError
 from instructions import Instructions
 
 class FiraScript: # pylint: disable=R0903
@@ -19,8 +19,18 @@ class FiraScript: # pylint: disable=R0903
         self.instructions.set_tables(tables)
 
     @staticmethod
-    def main(db_path: str = "") -> None:
+    def main(db_path: str = "", **kwargs) -> None:
         '''Main function. Do not include the file name in db_path.'''
+         # Kwargs
+        reset_db = kwargs.get("rdb", False) # True to delete the db file, False to keep it
+
+        db_path = db_path+"fira.db" if (len(db_path) == 0 or db_path[-1] == "/") else db_path+"/fira.db" # Add "fira.db" to db_path
+        if reset_db:
+            try:
+                file.delete(db_path)
+            except (PermissionError, FileNotFoundError):
+                print(Colours.WARNING, f"Could not delete the db file at db_path.", Colours.ENDC)
+
         # Set up db connection
         sql_connection = sql.connect(db_path)
         tables = {
@@ -65,11 +75,10 @@ class FiraScript: # pylint: disable=R0903
         while not end:
             user_inp = input("> ")
             try:
-                end = fira.instructions.decode(user_inp, db_path=db_path)
-            except Fs.FSError as e:
+                end = fira.instructions.decode(user_inp)
+            except FSError as e:
                 print(Colours.FAIL, e, Colours.ENDC)
 
 
 if __name__ == "__main__":
-    DATABASE_PATH = "C:/Users/okthe/VSCode/Aevitas/Zemia/Fira/fira.db"
-    FiraScript.main(DATABASE_PATH)
+    FiraScript.main(rdb=True)
