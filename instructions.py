@@ -411,6 +411,11 @@ class Instructions:
             elif str.lower(command_list[2]) in ["f", "fira"]:
                 root_translation = self.root_word_table.list_record(f"WHERE wordEng = \"{word}\"", "wordFira")
                 complex_translation = self.word_table.list_record(f"WHERE wordEng = \"{word}\"", "wordFira")
+                # If the word is a digit, check the num table
+                if word.isdigit():
+                    num_translation = self.num_table.list_record(f"WHERE value = {word}", "wordFira")
+                    if len(num_translation) > 0:
+                        complex_translation = num_translation
             else:
                 raise Fs.FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing <e|f>.")
         else:
