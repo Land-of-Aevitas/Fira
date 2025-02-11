@@ -71,5 +71,5 @@ class FiraScript: # pylint: disable=R0903
 
 
 if __name__ == "__main__":
-    DATABASE_PATH = "C:/Users/okthe/VSCode/Aevitas/Zemia/Fira/fira.db"
+    DATABASE_PATH = "fira.db"
     FiraScript.main(DATABASE_PATH)

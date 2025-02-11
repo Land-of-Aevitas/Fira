@@ -2,7 +2,7 @@
 DEBUG PRINT-READ
 
 # Basic words for other definitions
-DEFROOT _feminine a
+DEFROOT _feminine aa
 DEFROOT _masculine ī
 DEFROOT _neutral ū
 DEFROOT _plural o
@@ -19,7 +19,7 @@ DEFROOT _verb e
 TRANSLATE _place TO f
 
 # Update
-UPDATE _feminine aa
+UPDATE _feminine a
 
 DEFROOT r_Liquid Płyn
 # Defword, end, note

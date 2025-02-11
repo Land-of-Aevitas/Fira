@@ -218,7 +218,7 @@ class Instructions:
                             raise FSSyntaxError(f"{func_name} ERROR: Invalid number of with_params in 「{' '.join(command_list)}」.")
                 case "DERIVE":
                     if len(returndict["subwords"]) != 1:
-                        raise FSSyntaxError(f"{func_name} ERROR: WITH DERIVE must only have one subword 「{' '.join(command_list)}」.")
+                        raise Fs.FSSyntaxError(f"{func_name} ERROR: WITH DERIVE must only have one subword 「{' '.join(command_list)}」.")
                     if len(returndict["with_params"]) != 1:
                         raise FSSyntaxError(f"{func_name} ERROR: Invalid number of with_params in 「{' '.join(command_list)}」.")
                     der_word, der_type = "", ""
@@ -404,12 +404,13 @@ class Instructions:
 
         root_translation, complex_translation = [], []
         if command_list[1] == "TO":
+            word = command_list[0].lower()
             if str.lower(command_list[2]) in ["e", "english"]:
-                root_translation = self.root_word_table.list_record(f"WHERE wordFira = \"{command_list[0].lower()}\"", "wordEng")
-                complex_translation = self.word_table.list_record(f"WHERE wordFira = \"{command_list[0].lower()}\"", "wordEng")
+                root_translation = self.root_word_table.list_record(f"WHERE wordFira = \"{word}\"", "wordEng")
+                complex_translation = self.word_table.list_record(f"WHERE wordFira = \"{word}\"", "wordEng")
             elif str.lower(command_list[2]) in ["f", "fira"]:
-                root_translation = self.root_word_table.list_record(f"WHERE wordEng = \"{command_list[0].lower()}\"", "wordFira")
-                complex_translation = self.word_table.list_record(f"WHERE wordEng = \"{command_list[0].lower()}\"", "wordFira")
+                root_translation = self.root_word_table.list_record(f"WHERE wordEng = \"{word}\"", "wordFira")
+                complex_translation = self.word_table.list_record(f"WHERE wordEng = \"{word}\"", "wordFira")
             else:
                 raise Fs.FSSyntaxError(f"{func_name} ERROR: 「{' '.join(command_list)}」 not in format '<string> TO <e|f>', missing <e|f>.")
         else:
@@ -477,7 +478,7 @@ class Instructions:
         if not silent:
             print(func_name, end=" ... ") # Begin proccessing
 
-        f = file.read("fs_info.md", "utf-8")
+        f = file.read("docs/fs_info.md", "utf-8")
 
         if not silent:
             print("DONE") # Proccessing complete
