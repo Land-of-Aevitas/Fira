@@ -1,6 +1,6 @@
 '''Instructions module for the FiraScript language.'''
 import re
-from zemia.common import empty
+from zemia.common import empty, Colours
 from zemia import sql, file
  # Local imports
 import fs_errors as Fs
@@ -127,10 +127,12 @@ class Instructions:
                 match command_list[i]:
                     case "END":
                         returndict = self.defroot(command_list[:i]) # Recursion without this subcommand
-                        returndict["wordFira"] += self.translate(self.END_DICT[command_list[i+1]]+["TO","f"])
+                        returndict["wordFira"] += self.translate([self.END_DICT[command_list[i+1]],"TO","f"])
                         break
                     case "NOTE":
                         returndict = self.defroot(command_list[:i]) # Recursion without this subcommand
+                        if len(command_list) <= i+1:
+                            raise Fs.FSSyntaxError(f"{func_name} ERROR: No note provided in 「{' '.join(command_list)}」.")
                         returndict["note"] = command_list[i+1]
                         break
             if i == 0:
@@ -215,34 +217,27 @@ class Instructions:
                             returndict["wordFira"] = returndict["with_params"][0].join(returndict["subwords"])
                         case _:
                             raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid number of WITH JOIN params in「{' '.join(command_list)}」.\nExpecting: 1, Found: {len(returndict['with_params'])}.")
-                            raise FSSyntaxError(f"{func_name} ERROR: Invalid number of with_params in 「{' '.join(command_list)}」.")
                 case "DERIVE":
                     if len(returndict["subwords"]) != 1:
                         raise Fs.FSSyntaxError(f"{func_name} ERROR: WITH DERIVE must only have one subword 「{' '.join(command_list)}」.")
                     if len(returndict["with_params"]) != 1:
-                        raise FSSyntaxError(f"{func_name} ERROR: Invalid number of with_params in 「{' '.join(command_list)}」.")
+                        raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid number of with_params in 「{' '.join(command_list)}」.")
                     der_word, der_type = "", ""
                     match returndict["with_params"][0].lower():
-                        case "i"|"instance":
-                            der_word, der_type = "_Instance", "Instance"
-                        case "s"|"subject":
-                            der_word, der_type = "_Subject", "Subject"
-                        case "o"|"object":
-                            der_word, der_type = "_Object", "Object"
-                        case "p"|"place":
-                            der_word, der_type = "_Place", "Place"
-                        case "v"|"verb":
-                            der_word, der_type = "_Verb", "Verb"
-                        case _:
-                            raise FSSyntaxError(f"{func_name} ERROR: Invalid with_params value in 「{' '.join(command_list)}」.")
+                        case "i"|"instance": der_word, der_type = "_Instance", "Instance"
+                        case "s"|"subject":  der_word, der_type = "_Subject", "Subject"
+                        case "o"|"object":   der_word, der_type = "_Object", "Object"
+                        case "p"|"place":    der_word, der_type = "_Place", "Place"
+                        case "v"|"verb":     der_word, der_type = "_Verb", "Verb"
+                        case _: raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid with_params value in 「{' '.join(command_list)}」.")
                     derive = ""
                     try:
                         derive = self.translate([der_word, "TO", "f"])
-                    except FSError as e:
-                        raise FSSyntaxError(f"{func_name} ERROR: WITH DERIVE {der_type} Error: {e} in 「{' '.join(command_list)}」") from e
+                    except Fs.FSError as e:
+                        raise Fs.FSSyntaxError(f"{func_name} ERROR: WITH DERIVE {der_type} Error: {e} in 「{' '.join(command_list)}」") from e
                     returndict["wordFira"] = returndict["subwords"][0]+derive
                 case _:
-                    raise FSSyntaxError(f"{func_name} ERROR: Invalid WITH type in 「{' '.join(command_list)}」.")
+                    raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid WITH type in 「{' '.join(command_list)}」.")
             returndict["wordFira"] += returndict["append"]
 
         if not silent:
@@ -509,7 +504,7 @@ class Instructions:
          # Read the file line by line
         for line_number, file_line in enumerate(f):
             if self.print_read:
-                print(f"Reading {command_list[0]} line {line_number+1}: {file_line}")
+                print(Colours.OKCYAN, f"Reading {command_list[0]} line {line_number+1} |", Colours.ENDC, f"{file_line}")
             try:
                 end = self.decode(file_line, depth=depth+1)
                 if end:
@@ -569,6 +564,6 @@ class Instructions:
                 self.root_word_table.delete_record()
                 self.word_table.delete_record()
                 self.num_table.delete_record()
-                
+
             case _:
                 raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid subcommand in 「{' '.join(command_list)}」.")
