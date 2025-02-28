@@ -8,13 +8,19 @@ import fs_errors as Fs
 class Instructions:
     '''Instructions for the FiraScript language.'''
     def __init__(self) -> None:
-         # Settings - can be changed with the DEBUG command
-        self.silent = True
-        self.max_recursion_depth = 10
-        self.print_read = False
+        return
 
+    # Settings - can be changed with the DEBUG command
+    silent = True
+    max_recursion_depth = 10
+    '''Maximum file read depth - in case of recursive READs'''
+    max_lines = 1000
+    '''Maximum line reads per file - in case of recursive DEFWORDs'''
+    print_read = False
+
+    # Other globals
     END_DICT = {"m": "_Masculine", "f": "_Feminine", "n": "_Neutral", "p": "_Plural", "v": "_Verb"} # Used for the END subcommand
-    DIGIT_WORDS = ["Zero", "One", "Two", "three", "four", "five", "six", "seven", "eight", "nine"] # Used for DEFNUM
+    DIGIT_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"] # Used for DEFNUM
     root_word_table: sql.Table = None
     word_table: sql.Table = None
     num_table: sql.Table = None
@@ -25,7 +31,6 @@ class Instructions:
         self.root_word_table = tables["root"]
         self.word_table = tables["complex"]
         self.num_table = tables["num"]
-
 
     def decode(self, line: str, **kwargs) -> bool:
         '''Reads a line of FiraScript.'''
@@ -58,7 +63,7 @@ class Instructions:
                 # Remove the quotes
                 command_list[i] = command_list[i][1:-1]
         match command_list[0]:
-            case "" | "#":
+            case "" | "#": # Blank line or comment
                 pass
             case "DEFROOT":
                 defroot_dict = self.defroot(command_list[1:], silent=self.silent)
@@ -193,8 +198,10 @@ class Instructions:
                     break
                 try:
                     returndict["subwords"].append(self.translate([command, "TO", "Fira"], silent=True))
+                except Fs.FSNotDefinedError as e:
+                    raise Fs.FSNotDefinedError(f"{func_name} ERROR: Word not defined 「{command}」:\n\t{e}") from e
                 except Fs.FSError as e:
-                    raise Fs.FSSyntaxError(f"{func_name} ERROR: Error in 「{' '.join(command_list)}」: {e}") from e
+                    raise Fs.FSSyntaxError(f"{func_name} ERROR: Error in 「{' '.join(command_list)}」:\n\t{e}") from e
 
         # Assemble the word
         if not iteration:
@@ -234,7 +241,7 @@ class Instructions:
                     try:
                         derive = self.translate([der_word, "TO", "f"])
                     except Fs.FSError as e:
-                        raise Fs.FSSyntaxError(f"{func_name} ERROR: WITH DERIVE {der_type} Error: {e} in 「{' '.join(command_list)}」") from e
+                        raise Fs.FSSyntaxError(f"{func_name} ERROR: WITH DERIVE {der_type} Error in 「{' '.join(command_list)}」:\n\t{e}") from e
                     returndict["wordFira"] = returndict["subwords"][0]+derive
                 case _:
                     raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid WITH type in 「{' '.join(command_list)}」.")
@@ -499,19 +506,32 @@ class Instructions:
         try:
             f = file.read(command_list[0], "utf-8")
         except FileNotFoundError as e:
-            raise Fs.FSSyntaxError(f"{func_name} ERROR: File not found: 「{command_list[0]}」.") from e
+            raise Fs.FSOSError(f"{func_name} ERROR: File not found:「{command_list[0]}」\n\t{e}") from e
 
          # Read the file line by line
-        for line_number, file_line in enumerate(f):
-            if self.print_read:
-                print(Colours.OKCYAN, f"Reading {command_list[0]} line {line_number+1} |", Colours.ENDC, f"{file_line}")
-            try:
-                end = self.decode(file_line, depth=depth+1)
-                if end:
-                    return True
-            except Fs.FSSyntaxError as e:
-                raise Fs.FSSyntaxError(f"{func_name} ERROR: Error in file 「{command_list[0]}」 at line {line_number+1}: {e}") from e
-        return False
+        commands_to_run = f.copy()
+        c = 0
+        while not empty(commands_to_run) and c < 1000:
+            for line_number, file_line in enumerate(commands_to_run):
+                try:
+                    commands_to_run = self.__read_line(command_list[0], file_line, file_line, depth)
+                except Fs.FSSyntaxError as e:
+                    raise Fs.FSSyntaxError(f"{func_name} ERROR: Error in file 「{command_list[0]}」 at line {line_number+1}\n\t{e}") from e
+        return
+
+    def __read_line(self, file_name,line_number,file_line,depth):
+        '''Called iterativaly by self.read'''
+        additional_commands = []
+        if self.print_read:
+            print(Colours.OKCYAN, f"Reading {file_name} line {line_number+1} |", Colours.ENDC, f"{file_line}")
+        try:
+            end = self.decode(file_line, depth=depth+1)
+            if end:
+                return additional_commands
+        except Fs.FSNotDefinedError:
+            # If a root word is not defined, add this to the end of the command list to run later.
+            additional_commands.append(file_line)
+
 
     def debug(self, command_list: list[str]) -> None:
         '''Used for debugging.'''
@@ -538,16 +558,26 @@ class Instructions:
                         self.silent = not self.silent
                         #raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid SILENT value in 「{' '.join(command_list)}」.")
                 print(f"Silent mode set to {self.silent}.")
-            case "MAX-RECUR":
+            case "MAX-FILES":
                 old_max = self.max_recursion_depth
                 if i == len(command_list)-1: # No param
-                    self.max_recursion_depth = 10
+                    self.max_recursion_depth = Instructions.max_recursion_depth
                 else:
                     try:
                         self.max_recursion_depth = int(command_list[i+1])
                     except ValueError as e:
                         raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid MAX-RECUR value in 「{' '.join(command_list)}」.") from e
                 print(f"Max recursion depth updated from {old_max} to {self.max_recursion_depth}.")
+            case "MAX-LINES":
+                old_max = self.max_lines
+                if i == len(command_list)-1: # No param
+                    self.max_lines = Instructions.max_lines
+                else:
+                    try:
+                        self.max_lines = int(command_list[i+1])
+                    except ValueError as e:
+                        raise Fs.FSSyntaxError(f"{func_name} ERROR: Invalid MAX-LINES value in 「{' '.join(command_list)}」.") from e
+                print(f"Max line reads updated from {old_max} to {self.max_recursion_depth}.")
             case "PRINT-READ": # Toggle printing the current read file line number
                 if i == len(command_list)-1: # No param
                     self.print_read = not self.print_read

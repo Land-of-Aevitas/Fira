@@ -8,3 +8,5 @@ class FSRecursionError(FSError):
     '''Raised when the recursion depth is too high.'''
 class FSOSError(FSError):
     '''Raised when there is an OS/file error.'''
+class FSNotDefinedError(FSError):
+    '''Raised when attempting to transalte an undefined word'''

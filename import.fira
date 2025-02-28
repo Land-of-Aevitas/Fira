@@ -126,5 +126,306 @@ DEFROOT Hair Fūf END m
 DEFROOT Ṉkī Ṉk END m
 DEFROOT Gnomish Yenƶeca
 
+# Numbers
+
+DEFNUM Zero 0
+DEFNUM One 1
+DEFNUM Two 2
+DEFNUM Three 3
+DEFNUM Five 5
+DEFNUM Seven 7
+DEFNUM Nine 9
+DEFNUM Ten 10
+DEFNUM Twenty 20
+DEFNUM Thirty 30
+DEFNUM Fifty 50
+DEFNUM Seventy 70
+DEFNUM Eighty 80
+DEFNUM Ninety 90
+DEFNUM [One Hundred] 100
+
 # Everything else...
-DEFWORD Acid FROM Person Knowledge
+DEFWORD Acid FROM Flame Liquid NOTE [A liquid that burns]
+DEFWORD Air FROM Of Sky WITH SLICE 0 4
+DEFWORD Anger FROM Fire Emotion
+DEFWORD Bird FROM Creature High
+DEFWORD Black FROM All Dark
+DEFWORD Body FROM Person _Place WITH SLICE 3 1
+DEFWORD Apartment FROM Small House WITH SLICE 1 4
+DEFWORD Armour FROM Protection Cloth WITH SLICE 3 1
+DEFWORD At FROM Owning _Place WITH SLICE 0 -1
+DEFWORD Autumn FROM Time Harvest WITH SLICE 3 2 NOTE [Season]
+DEFWORD Below FROM Not Above WITH SLICE 0 2
+DEFWORD Building FROM Join Rock
+DEFWORD But FROM Not And WITH SLICE 1 0
+DEFWORD Cabin FROM Woods House WITH SLICE 3 3
+DEFWORD Castle FROM Protection House WITH SLICE 3 2
+DEFWORD Cat FROM Rodent Killer Animal WITH SLICE 3 0
+DEFWORD Chin FROM Bottom Head WITH SLICE 1 1
+DEFWORD Circuit FROM Tool Circle
+DEFWORD Clay FROM [To Build] Rock NOTE [Rock that is easy to build/model with]
+DEFWORD Cold FROM Without Heat WITH SLICE 1 2
+DEFWORD Colourless FROM Not Colour WITH SLICE 0 0
+DEFWORD Core FROM Metal Heart WITH SLICE 4 4
+DEFWORD Could FROM Some Time NOTE [It will happen in some of the possible futures]
+DEFWORD Countryside FROM Field Land WITH SLICE 4 3
+DEFWORD Cut FROM [To Cut] WITH DERIVE i END m
+DEFWORD Dagger FROM Hand Sword WITH SLICE 4 0
+DEFWORD Dark FROM Not Light WITH SLICE 1 3
+DEFWORD Day FROM Light Time
+DEFWORD Defence FROM Home Group WITH SLICE 3 1
+DEFWORD Desert FROM Many Sand WITH SLICE 2 1 NOTE [Shortened from Mnolnozemī]
+DEFWORD Destination FROM Place [To Go] END f
+DEFWORD [Dining Room] FROM Food _Place
+DEFWORD Dirt FROM Plant Rock
+DEFWORD Dog FROM Happy Animal
+DEFWORD Dragon FROM Sky Wurm WITH SLICE 3 0
+DEFWORD Dress FROM Large Skirt WITH SLICE 3 2
+DEFWORD Drink FROM [To Drink] WITH DERIVE o END m
+DEFNUM Eighty 80
+DEFWORD Emotion FROM Person Of WITH SLICE 3 0
+DEFWORD Empire FROM Emperor _Place WITH SLICE 2 2
+DEFWORD End FROM Not Beginning WITH SLICE 0 0
+DEFWORD Equality FROM One Towards One
+DEFWORD Everyday FROM All Day
+DEFWORD Everywhere FROM All _Place
+DEFWORD Family FROM Person Of Home WITH SLICE 0 1 0 1 0 1 NOTE [Shorthand for Person Of Home]
+DEFWORD Farm FROM Animal House WITH SLICE 1 1
+DEFWORD Fast FROM Of Speed WITH SLICE 0 0
+DEFWORD Field FROM Grass _Place WITH SLICE 3 2
+DEFWORD Fiery FROM Of Fire WITH SLICE 0 0
+DEFNUM Fifty 50
+DEFWORD Fighter FROM Person Heat WITH SLICE 3 0
+DEFWORD Fire FROM Flame _Plural WITH SLICE 1 0
+DEFWORD Fish FROM Water Animal
+DEFNUM Five 5
+DEFWORD Freedom FROM High Life
+DEFWORD Freeze FROM All Cold WITH SLICE 2 2
+DEFWORD From FROM Not Towards WITH SLICE 1 2
+DEFWORD Garden FROM House Field WITH SLICE 4 4
+DEFWORD Glass FROM Seeing Rock WITH SLICE 4 0
+DEFWORD God FROM Person Knowledge WITH SLICE 4 3
+DEFWORD Grass FROM Plant Ground WITH SLICE 1 4
+DEFWORD Grey FROM Light Dark WITH SLICE 0 0
+DEFWORD Ground FROM Rock _Place WITH SLICE 1 1
+DEFWORD Group FROM Many Person WITH SLICE 3 2
+DEFWORD Grow FROM More Big WITH SLICE 3 3
+DEFWORD Hamster FROM Fat Rodent
+DEFWORD Hand FROM Meta Tool
+DEFWORD Happy FROM Of Joy WITH SLICE 1 0
+DEFWORD Hard FROM Of Rock WITH SLICE 0 0
+DEFWORD Harmony FROM Together Whole
+DEFWORD Harvest FROM [To Hold] Food WITH SLICE 1 1
+DEFWORD Hat FROM Head Wrap WITH SLICE 2 1
+DEFWORD Heart FROM Tool Love
+DEFWORD Hello FROM [To Meet] You WITH SLICE 0 5 1 0 NOTE [Lit. "I Meet You"]
+DEFWORD Her FROM Of She WITH SLICE 1 0
+DEFWORD Here FROM Place Me WITH SLICE 4 1
+DEFWORD Herself FROM Meta She
+DEFWORD Hiding FROM [To Hide] WITH DERIVE i END f
+DEFWORD Hill FROM Small Mountain WITH SLICE 2 1
+DEFWORD Him FROM Of He WITH SLICE 1 0
+DEFWORD Himself FROM Meta He
+DEFWORD Holy FROM Of God
+DEFWORD Home FROM Life Place END m WITH SLICE 0 -4
+DEFWORD Horse FROM Motion Animal
+DEFWORD House FROM Home Place WITH SLICE 4 2
+DEFWORD Hunter FROM Killer Animal
+DEFWORD Ice FROM Solid Water WITH SLICE 1 2
+DEFWORD If FROM Query Path WITH SLICE 1 6
+DEFWORD Inside FROM In _Place
+DEFWORD Instant FROM Zero Time WITH SLICE 0 0
+DEFWORD Itself FROM Meta It
+DEFWORD Jumper FROM Warm Shirt WITH SLICE 4 3
+DEFWORD Jungle FROM Large Forest WITH SLICE 3 1 NOTE [Often shortened to Dētaş or Dētaşū]
+DEFWORD Killer FROM [To Kill] WITH DERIVE s END m
+DEFWORD Law FROM Knowledge Home WITH SLICE 2 2
+DEFWORD Limiter FROM [To End] WITH DERIVE s END f NOTE [Lit. "Ender"]
+DEFWORD Lightning FROM Tool High NOTE [Weapon of the Skies]
+DEFWORD Less FROM Not Many WITH SLICE 1 2
+DEFWORD Lifetime FROM Life Time
+DEFWORD Machine FROM Circuit Tool
+DEFWORD Market FROM Trade _Place WITH SLICE 2 2
+DEFWORD Memory FROM Tool Knowledge
+DEFWORD Merchant FROM Person Trade WITH SLICE 3 3
+DEFWORD Metadata FROM Meta Data
+DEFWORD Metal FROM Tool Rock
+DEFWORD Mine FROM Separate Rock
+DEFWORD More FROM Of And END n
+DEFWORD Mountain FROM Rock High WITH SLICE 0 2
+DEFWORD Mouse FROM Happy Rodent
+DEFWORD Mud FROM Dirt Wet WITH SLICE 4 4
+DEFWORD Music FROM Speaker High END f
+DEFWORD Myself FROM Meta I
+DEFWORD Neck FROM Together Body END f
+DEFNUM Nine 9
+DEFNUM Ninety 90
+DEFWORD [Not-All] FROM Not All WITH SLICE 1 1
+DEFWORD Nowhere FROM Zero _Place WITH SLICE 0 2
+DEFWORD Number FROM Many Digit WITH SLICE 3 0
+DEFWORD Ocean FROM Water _Place WITH SLICE 2 1
+DEFWORD Old FROM Many Time WITH SLICE 3 0
+DEFNUM One 1
+DEFNUM [One Hundred] 100
+DEFWORD Only FROM Of One WITH SLICE 0 0
+DEFWORD Orchard FROM Tree _Place WITH SLICE 2 2
+DEFWORD Ourselves FROM Meta We
+DEFWORD Out FROM Not At WITH SLICE 1 1
+DEFWORD Outside FROM Not Inside WITH SLICE 0 2
+DEFWORD Owned FROM [To Own] WITH DERIVE o END m
+DEFWORD Owner FROM [To Own] WITH DERIVE s END m
+DEFWORD Owning FROM [To Own] WITH DERIVE i END f
+DEFWORD Palace FROM Emperor Building WITH SLICE 3 3
+DEFWORD Pantheon FROM God House
+DEFWORD Passion FROM Person [To Want] WITH SLICE 3 4
+DEFWORD Path FROM Motion Place WITH SLICE 1 2
+DEFWORD Pet FROM Animal Of House WITH SLICE 2 0
+DEFWORD Pheonix FROM Fire Bird
+DEFWORD Pilgrim FROM [To Pilgrimage] WITH DERIVE s END m
+DEFWORD Pilgrimage FROM [To Pilgrimage] WITH DERIVE i END m
+DEFWORD Planet FROM Whole Ground WITH SLICE 1 4
+DEFWORD Port FROM Still _Place WITH SLICE 1 1
+DEFWORD Potter FROM Person Clay WITH SLICE 3 4
+DEFWORD Power FROM Tool Light
+DEFWORD Progress FROM Will Towards WITH SLICE 3 2
+DEFWORD Protection FROM [To Protect] WITH DERIVE i END m
+DEFWORD Protectorate FROM World Group WITH SLICE 3 0
+DEFWORD Rabbit FROM [To Jump] Animal WITH SLICE 1 1
+DEFWORD Rain FROM Sky Water WITH SLICE 4 1
+DEFWORD Recording FROM Circuit Speaker WITH SLICE 5 0
+DEFWORD Reflection FROM [To Reflect] WITH DERIVE o END n
+DEFWORD Regrowth FROM [To Grow] Return WITH SLICE 2 2
+DEFWORD Reproduction FROM [To Produce] Return WITH SLICE 1 3
+DEFWORD Return FROM [To Go] Start
+DEFWORD River FROM Water Wind WITH SLICE 3 1
+DEFWORD Robot FROM Tool Person
+DEFWORD Rope FROM Tool Join
+DEFWORD Sand FROM Many Rock WITH SLICE 3 0
+DEFWORD Scarf FROM Cloth Neck WITH SLICE 2 2
+DEFWORD Sea FROM Small Ocean NOTE [Shortened from createWord($C221, 2, 5)]
+DEFWORD Seaside FROM Ocean Sand WITH SLICE 4 2
+DEFWORD Seeing FROM [To See] WITH DERIVE i END f
+DEFNUM Seven 7
+DEFNUM Seventy 70
+DEFWORD Shirt FROM Chest Cloth END f
+DEFWORD Shoe FROM Foot Protection WITH SLICE 1 0
+DEFWORD Shorts FROM Small Trousers WITH SLICE 3 1 END m
+DEFWORD Skirt FROM Small Trousers WITH SLICE 3 1 END f
+DEFWORD Sky FROM Star _Place WITH SLICE 1 0
+DEFWORD Slow FROM Of Slowness WITH SLICE 0 0
+DEFWORD Slowness FROM Motion Tired WITH SLICE 1 3
+DEFWORD Sock FROM Foot Wrap WITH SLICE 1 0
+DEFWORD Soft FROM _Opposite Quality Rock WITH SLICE 1 1
+DEFWORD [Solar System] FROM Many Planet
+DEFWORD Song FROM Time Music WITH SLICE 1 0
+DEFWORD Space FROM Whole Darkness WITH SLICE 1 0
+DEFWORD Speaker FROM [To Say] WITH DERIVE s END f
+DEFWORD Speed FROM Motion Energy WITH SLICE 0 2
+DEFWORD Spirit FROM Air Undead WITH SLICE 3 3
+DEFWORD Spring FROM Time Regrowth WITH SLICE 2 4 NOTE [Season, previously Palta]
+DEFWORD Star FROM High Light WITH SLICE 2 2
+DEFWORD Still FROM Not Motion WITH SLICE 0 0
+DEFWORD Summer FROM Time Fire END n WITH SLICE 2 2 NOTE [Season, previously Viazda]
+DEFWORD Survive FROM [To Own] Life WITH SLICE 1 1
+DEFWORD Swimmer FROM Person Motion Water WITH SLICE 4 0
+DEFWORD [Swimming Suit] FROM [To Swim] Wrap WITH SLICE 3 3
+DEFWORD Sword FROM Tool Cut
+DEFWORD [T-Shirt] FROM Tī Shirt
+DEFWORD Temple FROM God _Place WITH SLICE 1 0
+DEFNUM Ten 10
+DEFWORD Them FROM Of They WITH SLICE 1 0
+DEFWORD Themselves FROM Meta They
+DEFWORD There FROM Place You_Sing WITH SLICE 4 1
+DEFWORD Thief FROM [To Take] WITH DERIVE s END m
+DEFWORD Thirsty FROM [To Need] Water END f
+DEFNUM Thirty 30
+DEFNUM Three 3
+DEFWORD Tired FROM No Energy WITH SLICE 0 0
+
+DEFWORD [To Anger] FROM Anger WITH DERIVE v
+DEFWORD [To Complete] FROM Complete WITH DERIVE v
+DEFWORD [To Continue] FROM Forever WITH DERIVE v
+DEFWORD [To Die] FROM [To Kill] _Passive Valency WITH SLICE 1 0
+DEFWORD [To End] FROM End WITH DERIVE v
+DEFWORD [To Fight] FROM Fighter WITH DERIVE v
+DEFWORD [To Follow] FROM Towards WITH DERIVE v
+DEFWORD [To Freeze] FROM Freeze WITH DERIVE v
+DEFWORD [To Grow] FROM Grow WITH DERIVE v
+DEFWORD [To Harvest] FROM Harvest WITH DERIVE v
+DEFWORD [To Hide] FROM Not [To See] WITH SLICE 1 2
+DEFWORD [To Hold] FROM Held WITH DERIVE v
+DEFWORD [To Hunt] FROM Hunter WITH DERIVE v
+DEFWORD [To Join] FROM Join WITH DERIVE v
+DEFWORD [To Jump] FROM High [To Go]
+DEFWORD [To Meet] FROM Time [To See]
+DEFWORD [To Mine] FROM Mine WITH DERIVE v
+DEFWORD [To Need] FROM All [To Have]
+DEFWORD [To Pilgrimage] FROM Temple [To Go] WITH SLICE 3 0
+DEFWORD [To Progress] FROM Progress WITH DERIVE v
+DEFWORD [To Rain] FROM Rain WITH DERIVE v
+DEFWORD [To Reflect] FROM [To Follow] [To Return] WITH SLICE 5 3
+DEFWORD [To Regrow] FROM Regrowth WITH DERIVE v
+DEFWORD [To Relax] FROM Leisure WITH DERIVE v
+DEFWORD [To Reproduce] FROM Reproduction WITH DERIVE v
+DEFWORD [To Return] FROM Return WITH DERIVE v
+DEFWORD [To Sing] FROM Song WITH DERIVE v
+DEFWORD [To Stabilise] FROM Stable WITH DERIVE v
+DEFWORD [To Survive] FROM Survive WITH DERIVE v
+DEFWORD [To Swim] FROM Swimmer WITH DERIVE v
+DEFWORD [To Thirst] FROM Thirsty WITH DERIVE v
+DEFWORD [To Trade] FROM [To Give] [To Take]
+DEFWORD [To Unite] FROM Union WITH DERIVE v
+DEFWORD [To Walk] FROM Walker WITH DERIVE v
+DEFWORD [To Want] FROM Some [To Have]
+DEFWORD [To Work] FROM Work WITH DERIVE v
+
+DEFWORD Tortoise FROM Armour Animal WITH SLICE 3 0
+DEFWORD Towards FROM Of Motion WITH SLICE 0 0
+DEFWORD Trade FROM [To Trade] WITH DERIVE i END m
+DEFWORD Tree FROM Plant High WITH SLICE 3 0
+DEFWORD Trousers FROM Cloth Legs WITH SLICE 1 2
+DEFNUM Twenty 20
+DEFNUM Two 2
+DEFWORD Undead FROM Not Dead WITH SLICE 1 0
+DEFWORD Union FROM [To Join] People END f
+DEFWORD Until FROM Time Towards
+DEFWORD User FROM [To Use] WITH DERIVE s END n
+DEFWORD Village FROM Many House WITH SLICE 2 3
+DEFWORD Walker FROM Person Motion
+DEFWORD Warmth FROM Soft Heart WITH SLICE 2 5
+DEFWORD Water FROM Drink Liquid WITH SLICE 6 0
+DEFWORD Wet FROM Of Water WITH SLICE 0 0
+DEFWORD White FROM All Light
+DEFWORD Will FROM All Time
+DEFWORD Wind FROM High Motion WITH SLICE 3 0
+DEFWORD Winter FROM Time Death END n WITH SLICE 2 0 NOTE [Season]
+DEFWORD Within FROM Place At WITH SLICE 5 0
+DEFWORD Without FROM Not Of WITH SLICE 1 1
+DEFWORD Woods FROM Body Tree WITH SLICE 3 1
+DEFWORD Work FROM Tool Motion
+DEFNUM Zero 0
+
+# Extended Lexicon entries
+DEFWORD Me FROM I
+DEFWORD Us FROM We
+DEFWORD Them FROM They
+DEFWORD Creature FROM Animal
+DEFWORD [To Be On Top Of] FROM [To Sit]
+DEFWORD [To Control] FROM [To Own]
+DEFWORD [To Hold] FROM [To Own]
+DEFWORD [To Carry] FROM [To Own]
+DEFWORD [To Have] FROM [To Own]
+DEFWORD Data FROM Knowledge
+DEFWORD Information FROM Knowledge
+DEFWORD [To Speak] FROM [To Say]
+DEFWORD [To Communicate] FROM [To Say]
+DEFWORD Anger FROM Flame
+DEFWORD Earth FROM Ground
+DEFWORD Joy FROM Life
+DEFWORD Vision FROM Light
+DEFWORD Exhaustion FROM Heat
+DEFWORD Circle FROM Whole
+DEFWORD Complete FROM Whole
+DEFWORD High FROM Above
+DEFWORD Start FROM Beginning
+DEFWORD Front FROM Beginning
